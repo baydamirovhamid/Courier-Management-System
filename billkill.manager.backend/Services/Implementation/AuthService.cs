@@ -8,6 +8,7 @@ using billkill.manager.backend.Infrastructure.Repository;
 using billkill.manager.backend.Models;
 using billkill.manager.backend.Services.Interface;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Web;
 
 namespace billkill.manager.backend.Services.Implementation
@@ -42,7 +43,7 @@ namespace billkill.manager.backend.Services.Implementation
             _emailService = emailService;
         }
 
-        public async Task<ResponseSimple> RegisterUserAsync(ResponseSimple response, RegisterDto model)
+        public async Task<ResponseSimple> RegisterUserAsync(ResponseSimple response, RegisterUserDto model)
         {
             try
             {
@@ -140,7 +141,7 @@ namespace billkill.manager.backend.Services.Implementation
                 }
 
                 var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-                if(!result.Succeeded)
+                if (!result.Succeeded)
                 {
                     response.Status.ErrorCode = ErrorCodes.AUTH;
                     response.Status.Message = "Şifrə yenilənmədi!";
@@ -158,33 +159,36 @@ namespace billkill.manager.backend.Services.Implementation
             return response;
         }
 
-        //public async Task<ResponseSimple> RegisterEmployeeAsync(ResponseSimple response, UserDto model)
-        //{
-        //    try
-        //    {
-        //        var user = _mapper.Map<USER>(model);
+        public async Task<ResponseSimple> RegisterEmployeeAsync(ResponseSimple response, RegisterEmployeeDto model)
+        {
+            var user = _mapper.Map<USER>(model);
 
-        //        var result = await _userManager.CreateAsync(user, model.Password);
-        //        if (!result.Succeeded)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //            response.Status.Message = "Problem baş verdi!";
-        //        }
-        //        else
-        //        {
-        //            _employee.Insert(invoiceType);
-        //            await _employee.SaveAsync();
-        //            response.Status.Message = "Uğurla əlavə olundu!";
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(RegisterAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+            try
+            {
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (!result.Succeeded)
+                {
+                    response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                    response.Status.Message = "Problem baş verdi!";
+                }
+                else
+                {
+                    var employee = _mapper.Map<EMPLOYEE>(model);
+                    employee.UserId = user.Id;
+                    _employee.Insert(employee);
+                    await _employee.SaveAsync();
+                    response.Status.Message = "Uğurla əlavə olundu!";
+                }
+            }
+            catch (Exception e)
+            {
+                await _userManager.DeleteAsync(user);
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(RegisterEmployeeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
         //Helper
         private async Task<string> GeneratePasswordResetTokenAsync(USER user)

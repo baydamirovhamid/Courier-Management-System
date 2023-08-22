@@ -15,6 +15,6 @@ namespace billkill.manager.backend.Models
         public int RoleId { get; set; }
 
         [Column("COMPANY_ID")]
-        public string CompanyId { get; set; }
+        public int CompanyId { get; set; }
     }
 }

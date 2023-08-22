@@ -42,6 +42,9 @@ namespace billkill.manager.backend.Infrastructure
         }
 
         public DbSet<USER> USER { get; set; }
+        public DbSet<EMPLOYEE> EMPLOYEE { get; set; }
+        public DbSet<EMPLOYEE_ROLE> EMPLOYEE_ROLE { get; set; }
+        public DbSet<MANAGEMENT_COMPANY> MANAGEMENT_COMPANY { get; set; }
         public DbSet<INVOICE_TYPE> INVOICE_TYPE { get; set; }
     }
 }

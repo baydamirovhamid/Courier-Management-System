@@ -8,7 +8,9 @@ namespace billkill.manager.backend.Extensions
     {
         public MappingEntity()
         {
-            CreateMap<RegisterDto, USER>().ReverseMap();
+            CreateMap<RegisterUserDto, USER>().ReverseMap();
+            CreateMap<RegisterEmployeeDto, USER>().ReverseMap();
+            CreateMap<RegisterEmployeeDto, EMPLOYEE>().ReverseMap();
             CreateMap<InvoiceTypeDto, INVOICE_TYPE>().ReverseMap();
 
             //CreateMap<INQUIRY, NewInquiryPayload>()

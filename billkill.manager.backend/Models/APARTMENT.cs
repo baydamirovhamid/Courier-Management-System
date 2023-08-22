@@ -11,8 +11,11 @@ namespace billkill.manager.backend.Models
         [Column("NAME")]
         public string Name { get; set; }
 
-        [Column("SUBSCRIBER_CODE")]
-        public string SubscriberCode { get; set; }
+        [Column("PHONE")]
+        public string Phone { get; set; }
+
+        [Column("VOLUME")]
+        public string Volume { get; set; }
 
         [Column("BUILDING_ID")]
         public string BuildingId { get; set; }

@@ -30,7 +30,7 @@ namespace billkill.manager.backend.Controllers
 
         [HttpPost]
         [Route("register-user")]
-        public async Task<IActionResult> RegisterUserAsync(RegisterDto model)
+        public async Task<IActionResult> RegisterUserAsync(RegisterUserDto model)
         {
             ResponseSimple response = new ResponseSimple();
             response.Status = new StatusModel();
@@ -56,6 +56,33 @@ namespace billkill.manager.backend.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("register-employee")]
+        public async Task<IActionResult> RegisterEmployeeAsync(RegisterEmployeeDto model)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _authService.RegisterEmployeeAsync(response, model);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(RegisterEmployeeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
 
         [HttpPost]
         [Route("login-user")]
