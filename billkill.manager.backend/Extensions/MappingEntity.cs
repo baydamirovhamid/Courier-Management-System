@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using billkill.manager.backend.DTO.RequestModels;
+using billkill.manager.backend.Models;
 
 namespace billkill.manager.backend.Extensions
 {
@@ -6,7 +8,8 @@ namespace billkill.manager.backend.Extensions
     {
         public MappingEntity()
         {
-            //CreateMap<UpdatePersonModel, PERSONS>().ReverseMap();
+            CreateMap<RegisterDto, USER>().ReverseMap();
+            CreateMap<InvoiceTypeDto, INVOICE_TYPE>().ReverseMap();
 
             //CreateMap<INQUIRY, NewInquiryPayload>()
             //   .ForMember(dest => dest.InquiryDocType, opts => opts.MapFrom(src => src.DocTypeId))

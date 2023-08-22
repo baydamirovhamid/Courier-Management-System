@@ -1,6 +1,6 @@
 ﻿using billkill.manager.backend.DTO.HelperModels.Const;
 using billkill.manager.backend.Services.Interface;
-using StatusCodes = billkill.manager.backend.DTO.HelperModels.Const.StatusCodes;
+using StatusCodeModel = billkill.manager.backend.DTO.HelperModels.Const.StatusCodeModel;
 
 namespace billkill.manager.backend.Services.Implementation
 {
@@ -11,18 +11,18 @@ namespace billkill.manager.backend.Services.Implementation
             switch (error)
             {
                 case ErrorCodes.AUTH:
-                    return StatusCodes.AUTH;
+                    return StatusCodeModel.AUTH;
 
                 case ErrorCodes.FORBIDDEN:
-                    return StatusCodes.FORBIDDEN;
+                    return StatusCodeModel.FORBIDDEN;
 
                 case ErrorCodes.NOT_FOUND:
-                    return StatusCodes.NOT_FOUND;
+                    return StatusCodeModel.NOT_FOUND;
 
                 case ErrorCodes.LOOKUP:
                 case ErrorCodes.REQUIRED:
                 case ErrorCodes.FORMAT:
-                    return StatusCodes.BAD_REQUEST;
+                    return StatusCodeModel.BAD_REQUEST;
 
                 case ErrorCodes.AVIS_NOT_FOUND:
                 case ErrorCodes.IAMAS_NOT_FOUND:
@@ -30,7 +30,7 @@ namespace billkill.manager.backend.Services.Implementation
                 case ErrorCodes.CUSTOMER:
                 case ErrorCodes.RELATED_PEOPLE:
                 case ErrorCodes.OPERATION:
-                    return StatusCodes.OK;
+                    return StatusCodeModel.OK;
 
                 case ErrorCodes.IAMAS_SERVER:
                 case ErrorCodes.AVIS_SERVER:
@@ -38,9 +38,9 @@ namespace billkill.manager.backend.Services.Implementation
                 case ErrorCodes.DB:
                 case ErrorCodes.MODEL_STATE:
                 case ErrorCodes.BULK:
-                    return StatusCodes.INTERNEL_SERVER;
+                    return StatusCodeModel.INTERNEL_SERVER;
             }
-            return StatusCodes.OK;
+            return StatusCodeModel.OK;
         }
     }
 }

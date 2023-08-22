@@ -6,7 +6,7 @@ namespace billkill.manager.backend.Services.Implementation
     {
         public string GetInvoiceTypes()
         {
-            return "SELECT * FROM \"InvoiceTypes\"";
+            return "SELECT * FROM \"INVOICE_TYPE\"";
         }
     }
 }

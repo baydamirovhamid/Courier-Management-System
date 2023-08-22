@@ -1,6 +1,7 @@
 ﻿using billkill.manager.backend.Services.Implementation;
 using billkill.manager.backend.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -45,6 +46,14 @@ namespace billkill.manager.backend.Extensions
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
                 };
+            });
+        }
+
+        public static void ConfigureDataProtectionTokenProvider(this IServiceCollection services)
+        {
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(8);
             });
         }
     }

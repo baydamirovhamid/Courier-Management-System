@@ -1,5 +1,7 @@
-﻿using billkill.manager.backend.DTO.HelperModels;
+﻿using AutoMapper;
+using billkill.manager.backend.DTO.HelperModels;
 using billkill.manager.backend.DTO.HelperModels.Const;
+using billkill.manager.backend.DTO.RequestModels;
 using billkill.manager.backend.DTO.ResponseModels.Main;
 using billkill.manager.backend.Infrastructure.Repository;
 using billkill.manager.backend.Models;
@@ -14,98 +16,101 @@ namespace billkill.manager.backend.Services.Implementation
 {
     public class InvoiceTypeService : IInvoiceTypeService
     {
-        //private readonly IRepository<Models.InvoiceType> _invoiceTypes;
+        private readonly IRepository<INVOICE_TYPE> _invoiceTypes;
         private readonly ILoggerManager _logger;
         private readonly IConfiguration _configuration;
         private readonly ISqlService _sqlService;
+        private readonly IMapper _mapper;
 
         public InvoiceTypeService(
-            //IRepository<InvoiceType> invoiceType, 
+            IRepository<INVOICE_TYPE> invoiceType,
             ILoggerManager logger,
             IConfiguration configuration,
-            ISqlService sqlService)
+            ISqlService sqlService,
+            IMapper mapper)
         {
-            //_invoiceTypes = invoiceType;
+            _invoiceTypes = invoiceType;
             _logger = logger;
             _configuration = configuration;
             _sqlService = sqlService;
-
+            _mapper = mapper;
         }
-        //public async Task<ResponseSimple> CreateInvoiceTypeAsync(ResponseSimple response, Models.InvoiceType invoiceType)
-        //{
-        //    try
-        //    {
-        //        _invoiceTypes.Insert(invoiceType);
-        //        await _invoiceTypes.SaveAsync();
-        //        response.Status.Message = "Uğurla əlavə olundu!";
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(CreateInvoiceTypeAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+        public async Task<ResponseSimple> CreateInvoiceTypeAsync(ResponseSimple response, InvoiceTypeDto model)
+        {
+            try
+            {
+                var invoiceType = _mapper.Map<INVOICE_TYPE>(model);
+                _invoiceTypes.Insert(invoiceType);
+                await _invoiceTypes.SaveAsync();
+                response.Status.Message = "Uğurla əlavə olundu!";
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(CreateInvoiceTypeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
-        //public async Task<ResponseObject<InvoiceType>> GetInvoiceTypeAsync(ResponseObject<InvoiceType> response, int id)
-        //{
-        //    try
-        //    {
-        //        var invoiceType = await _invoiceTypes.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
-        //        if (invoiceType == null)
-        //        {
-        //            response.Status.Message = "Tapılmadı!";
-        //            response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
-        //            return response;
-        //        }
-        //        response.Response = invoiceType;
-        //        return response;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetInvoiceTypeAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+        public async Task<ResponseObject<INVOICE_TYPE>> GetInvoiceTypeAsync(ResponseObject<INVOICE_TYPE> response, int id)
+        {
+            try
+            {
+                var invoiceType = await _invoiceTypes.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+                if (invoiceType == null)
+                {
+                    response.Status.Message = "Tapılmadı!";
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    return response;
+                }
+                response.Response = invoiceType;
+                return response;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetInvoiceTypeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
-        //public async Task<ResponseListTotal<InvoiceType>> GetInvoiceTypesAsync(ResponseListTotal<InvoiceType> response)
-        //{
-        //    try
-        //    {
-        //        using (NpgsqlConnection con = new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-        //        {
-        //            NpgsqlCommand cmd;
-        //            using (cmd = con.CreateCommand())
-        //            {
-        //                await con.OpenAsync();
+        public async Task<ResponseListTotal<INVOICE_TYPE>> GetInvoiceTypesAsync(ResponseListTotal<INVOICE_TYPE> response)
+        {
+            try
+            {
+                using (NpgsqlConnection con = new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    NpgsqlCommand cmd;
+                    using (cmd = con.CreateCommand())
+                    {
+                        await con.OpenAsync();
 
-        //                cmd.CommandText = _sqlService.GetInvoiceTypes();
+                        cmd.CommandText = _sqlService.GetInvoiceTypes();
 
-        //                DbDataReader rdr = await cmd.ExecuteReaderAsync();
+                        DbDataReader rdr = await cmd.ExecuteReaderAsync();
 
-        //                while (await rdr.ReadAsync())
-        //                {
-        //                    InvoiceType encum = new InvoiceType();
-        //                    {
-        //                        encum.Id = (int)rdr["Id"];
-        //                        encum.Name = rdr["Name"].ToString();
-        //                    }
-        //                    response.Response.Data.Add(encum);
-        //                }
-        //            }
-        //            await con.CloseAsync();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetInvoiceTypeAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+                        while (await rdr.ReadAsync())
+                        {
+                            INVOICE_TYPE encum = new INVOICE_TYPE();
+                            {
+                                encum.Id = (int)rdr["ID"];
+                                encum.Name = rdr["NAME"].ToString();
+                            }
+                            response.Response.Data.Add(encum);
+                        }
+                    }
+                    await con.CloseAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetInvoiceTypeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
     }
 }

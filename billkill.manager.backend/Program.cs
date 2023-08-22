@@ -1,9 +1,11 @@
 using billkill.manager.backend.Extensions;
 using billkill.manager.backend.Infrastructure;
 using billkill.manager.backend.Infrastructure.Repository;
+using billkill.manager.backend.Models;
 using billkill.manager.backend.Services.Implementation;
 using billkill.manager.backend.Services.Interface;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NLog.Extensions.Logging;
@@ -16,19 +18,31 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddAutoMapper(x => x.AddProfile(new MappingEntity()));
 builder.Services.ConfigureCors();
 builder.Services.ConfigureJWTService();
 builder.Services.ConfigureLoggerService();
+builder.Services.ConfigureDataProtectionTokenProvider();
 
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ISqlService, SqlService>();
 builder.Services.AddTransient<ICmdService, CmdService>();
 builder.Services.AddTransient<IJwtHandler, JwtHandler>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IInvoiceTypeService, InvoiceTypeService>();
 builder.Services.AddTransient<IValidationCommon, ValidationCommon>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
 builder.Services.AddDbContext<BillKillDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddIdentity<USER, EMPLOYEE_ROLE>(options =>
+{
+
+})
+//.AddRoles<EMPLOYEE_ROLE>()
+.AddEntityFrameworkStores<BillKillDbContext>()
+.AddDefaultTokenProviders();
 
 //Logs
 builder.Host.ConfigureLogging((hostingContext, logging) =>

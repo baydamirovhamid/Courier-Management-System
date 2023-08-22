@@ -1,6 +1,6 @@
 ﻿namespace billkill.manager.backend.DTO.HelperModels.Const
 {
-    public class StatusCodes
+    public class StatusCodeModel
     {
         public const int OK = 200;
         public const int AUTH = 401;
