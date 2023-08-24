@@ -25,12 +25,12 @@ builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureDataProtectionTokenProvider();
 
 builder.Services.AddTransient<IAuthService, AuthService>();
-builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ISqlService, SqlService>();
 builder.Services.AddTransient<ICmdService, CmdService>();
 builder.Services.AddTransient<IJwtHandler, JwtHandler>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IInvoiceTypeService, InvoiceTypeService>();
+builder.Services.AddTransient<ILookupService, LookupService>();
 builder.Services.AddTransient<IValidationCommon, ValidationCommon>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
@@ -40,7 +40,7 @@ builder.Services.AddIdentity<USER, EMPLOYEE_ROLE>(options =>
 {
 
 })
-//.AddRoles<EMPLOYEE_ROLE>()
+.AddRoles<EMPLOYEE_ROLE>()
 .AddEntityFrameworkStores<BillKillDbContext>()
 .AddDefaultTokenProviders();
 

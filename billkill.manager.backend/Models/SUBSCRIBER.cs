@@ -9,9 +9,9 @@ namespace billkill.manager.backend.Models
         public int Id { get; set; }
 
         [Column("USER_ID")]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [Column("SUBSCRIBER_CODE")]
-        public string SubscriberCode { get; set; }
+        public string? SubscriberCode { get; set; }
     }
 }

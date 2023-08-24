@@ -21,30 +21,19 @@ namespace billkill.manager.backend.Infrastructure
             {
                 b.ToTable("USER");
             });
-            //builder.Entity<Role>(b => {
-            //    b.ToTable("Roles");
-            //});
-            //builder.Entity<IdentityUserClaim<int>>(b => {
-            //    b.ToTable("UserClaims");
-            //});
-            //builder.Entity<IdentityRoleClaim<int>>(b => {
-            //    b.ToTable("RoleClaims");
-            //});
-            //builder.Entity<IdentityUserLogin<int>>(b => {
-            //    b.ToTable("UserLogins");
-            //});
-            //builder.Entity<IdentityUserToken<int>>(b => {
-            //    b.ToTable("UserTokens");
-            //});
-            //builder.Entity<IdentityUserRole<int>>(b => {
-            //    b.ToTable("UserRoles");
-            //});
+            builder.Entity<EMPLOYEE_ROLE>(b =>
+            {
+                b.ToTable("EMPLOYEE_ROLE");
+            });
         }
 
         public DbSet<USER> USER { get; set; }
         public DbSet<EMPLOYEE> EMPLOYEE { get; set; }
         public DbSet<EMPLOYEE_ROLE> EMPLOYEE_ROLE { get; set; }
         public DbSet<MANAGEMENT_COMPANY> MANAGEMENT_COMPANY { get; set; }
+        public DbSet<BUILDING> BUILDING { get; set; }
+        public DbSet<APARTMENT> APARTMENT { get; set; }
         public DbSet<INVOICE_TYPE> INVOICE_TYPE { get; set; }
+        public DbSet<SERVICE> SERVICE { get; set; }
     }
 }
