@@ -35,7 +35,7 @@ namespace billkill.payment.service.Services.Implementation
         {
             try
             {
-                var payment = _payments.AllQuery.FirstOrDefault(x => x.TransId == model.TransactionId);
+                var payment = GetPayment(model.TransactionId);
                 if (payment == null)
                 {
                     var result = await _invoices.AllQuery
@@ -65,7 +65,7 @@ namespace billkill.payment.service.Services.Implementation
                 else
                 {
                     response.Status.ErrorCode = ErrorCodes.ALREADY_PAID;
-                    response.Status.Message = "Qaimə ödənilib!";
+                    response.Status.Message = "Qaimə artıq ödənilib!";
                 }
 
             }
@@ -87,7 +87,7 @@ namespace billkill.payment.service.Services.Implementation
             {
                 try
                 {
-                    var payment_old = _payments.AllQuery.FirstOrDefault(x => x.TransId == model.TransactionId);
+                    var payment_old = GetPayment(model.TransactionId);
                     var invoice = await _invoices.AllQuery
                                        .AsNoTracking()
                                        .FirstOrDefaultAsync(x => x.AboneNumber == model.SubscriberCode && x.Status);
@@ -132,8 +132,8 @@ namespace billkill.payment.service.Services.Implementation
                     }
                     else
                     {
-                        response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
-                        response.Status.Message = "Müraciət üzrə nəticə tapılmadı!";
+                        response.Status.ErrorCode = ErrorCodes.ALREADY_PAID;
+                        response.Status.Message = "Qaimə artıq ödənilib!";
                     }
 
 
@@ -156,8 +156,8 @@ namespace billkill.payment.service.Services.Implementation
         {
             try
             {
-                var payment = _payments.AllQuery.FirstOrDefault(x => x.TransId == model.TransactionId);
-                if(payment != null) {
+                var payment = GetPayment(model.TransactionId);
+                if (payment!=null) {
                    var result = await _invoices.AllQuery
                   .Include(x => x.Aggreement)
                   .Include(x => x.Spa)
@@ -197,9 +197,11 @@ namespace billkill.payment.service.Services.Implementation
                 response.Status.Message = "Problem baş verdi!";
             }
             return response;
+        }
 
-
-
+        private PAYMENT GetPayment(string transId)
+        {
+            return _payments.AllQuery.FirstOrDefault(x => x.TransId == transId);
         }
     }
 }
