@@ -11,6 +11,7 @@
         // 400
         public const int REQUIRED = 21;
         public const int FORMAT = 22;
+        public const int ALREADY_PAID = 23;
 
         //404
         public const int NOT_FOUND = 51;

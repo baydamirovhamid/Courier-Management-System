@@ -35,26 +35,39 @@ namespace billkill.payment.service.Services.Implementation
         {
             try
             {
-                var result = await _invoices.AllQuery
-                .Include(x => x.Subscriber)
-                .ThenInclude(x => x.User)
-                .Include(x => x.Aggreement)
-                .Include(x => x.Spa)
-                .ThenInclude(x => x.Apartment)
-                .FirstOrDefaultAsync(x => x.AboneNumber == model.SubscriberCode && !x.STATUS);
-
-                if(result!=null)
+                var payment = _payments.AllQuery.FirstOrDefault(x => x.TransId == model.TransactionId);
+                if (payment == null)
                 {
-                    response.Response = new TerminalBeforePaymentResponseDto();
-                    response.Response.Subscriber = result.Subscriber.User.UserName;
-                    response.Response.SubscribtionName = result.Spa.Apartment.Address;
-                    response.Response.Invoice = new InvoiceBaseDto();
-                    response.Response.Invoice.SpAgreementNo = result.Aggreement.MtkNum;
-                    response.Response.Invoice.Debt = result.CommonDebt;
-                    response.Response.Invoice.Services = string.Join(",", _agreementServices.AllQuery.Include(x=>x.Service).Where(x=>x.AgreementId==result.AgreementId).ToList());
+                    var result = await _invoices.AllQuery
+                    .Include(x => x.Aggreement)
+                    .Include(x => x.Spa)
+                    .ThenInclude(x => x.Apartment)
+                    .FirstOrDefaultAsync(x => x.AboneNumber == model.SubscriberCode && x.Status);
 
+                    if (result != null)
+                    {
+                        response.Response = new TerminalBeforePaymentResponseDto();
+                        response.Response.Subscriber = result.Spa.Apartment.Name;
+                        response.Response.SubscribtionName = result.Spa.Apartment.Address;
+                        response.Response.Invoice = new InvoiceBaseDto();
+                        response.Response.Invoice.SpAgreementNo = result.Aggreement.MtkNum;
+                        response.Response.Invoice.Debt = result.CommonDebt;
+                        var services = _agreementServices.AllQuery.Include(x => x.Service).Where(x => x.AgreementId == result.AgreementId).Select(x => x.Service.Name).ToList();
+                        response.Response.Invoice.Services = string.Join(",", services);
+
+                    }
+                    else
+                    {
+                        response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                        response.Status.Message = "Müraciət üzrə nəticə tapılmadı!";
+                    }
                 }
-                
+                else
+                {
+                    response.Status.ErrorCode = ErrorCodes.ALREADY_PAID;
+                    response.Status.Message = "Qaimə ödənilib!";
+                }
+
             }
             catch (Exception e)
             {
@@ -70,60 +83,71 @@ namespace billkill.payment.service.Services.Implementation
 
         public async Task<ResponseObject<TerminalAfterPaymentResponseDto>> PayAsync(ResponseObject<TerminalAfterPaymentResponseDto> response, PayDto model)
         {
-            try
+            using (var transaction = _payments.BeginTransaction())
             {
-                var payment_old = _payments.AllQuery.FirstOrDefault(x => x.TransId == model.TransactionId);
-                var result = await _invoices.AllQuery
-                                   .Include(x => x.Subscriber)
-                                   .ThenInclude(x => x.User)
-                                   .Include(x => x.Aggreement)
-                                   .Include(x => x.Spa)
-                                   .ThenInclude(x => x.Apartment)
-                                   .FirstOrDefaultAsync(x => x.AboneNumber == model.SubscriberCode && !x.STATUS);
-                if (payment_old == null && result!=null)
+                try
                 {
-                    result.CommonDebt -= model.Amount;
-                    result.UpdatedAt = DateTime.Now;
-
-                    _invoices.Update(result);
-                    await _invoices.SaveAsync();
-
-                    PAYMENT payment = new PAYMENT();
-                    payment.Amount = model.Amount;
-                    payment.TransId = model.TransactionId;
-                    payment.PaymentDate = model.PaymentDate;
-                    payment.CreatedAt = DateTime.Now;
-                    payment.UpdatedAt = DateTime.Now;
-
-                    _payments.Insert(payment);
-                    await _payments.SaveAsync();
-
-                    if (result != null)
+                    var payment_old = _payments.AllQuery.FirstOrDefault(x => x.TransId == model.TransactionId);
+                    var invoice = await _invoices.AllQuery
+                                       .AsNoTracking()
+                                       .FirstOrDefaultAsync(x => x.AboneNumber == model.SubscriberCode && x.Status);
+                    if (payment_old == null && invoice != null)
                     {
-                        response.Response = new TerminalAfterPaymentResponseDto();
-                        response.Response.Subscriber = result.Subscriber.User.UserName;
-                        response.Response.SubscribtionName = result.Spa.Apartment.Address;
-                        response.Response.Invoice = new InvoiceDto();
-                        response.Response.Invoice.SpAgreementNo = result.Aggreement.MtkNum;
-                        response.Response.Invoice.Debt = model.Amount;
-                        response.Response.Invoice.PaymentDate = model.PaymentDate;
-                        response.Response.Invoice.Services = string.Join(",", _agreementServices.AllQuery.Include(x => x.Service).Where(x => x.AgreementId == result.AgreementId).ToList());
+                        invoice.CommonDebt -= model.Amount;
+                        invoice.UpdatedAt = new DateTime();
+
+                        _invoices.Update(invoice);
+                        await _invoices.SaveAsync();
+
+                        PAYMENT payment = new PAYMENT();
+                        payment.Amount = model.Amount;
+                        payment.TransId = model.TransactionId;
+                        payment.PaymentDate = model.PaymentDate;
+                        payment.InvoiceId = invoice.Id;
+                        payment.CreatedAt = new DateTime();
+                        payment.UpdatedAt = new DateTime();
+
+                        _payments.Insert(payment);
+                        await _payments.SaveAsync();
+                        var result = await _invoices.AllQuery
+                                      .Include(x => x.Aggreement)
+                                      .Include(x => x.Spa)
+                                      .ThenInclude(x => x.Apartment)
+                                      .FirstOrDefaultAsync(x => x.AboneNumber == model.SubscriberCode && x.Status);
+                        if (result != null)
+                        {
+                            response.Response = new TerminalAfterPaymentResponseDto();
+                            response.Response.Subscriber = result.Spa.Apartment.Name;
+                            response.Response.SubscribtionName = result.Spa.Apartment.Address;
+                            response.Response.Invoice = new InvoiceDto();
+                            response.Response.Invoice.SpAgreementNo = result.Aggreement.MtkNum;
+                            response.Response.Invoice.Debt = result.CommonDebt;
+                            response.Response.Invoice.PaymentDate = model.PaymentDate;
+                            var services = _agreementServices.AllQuery.Include(x => x.Service).Where(x => x.AgreementId == result.AgreementId).Select(x => x.Service.Name).ToList();
+                            response.Response.Invoice.Services = string.Join(",", services);
+
+                        }
+                        transaction.Commit();
 
                     }
+                    else
+                    {
+                        response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                        response.Status.Message = "Müraciət üzrə nəticə tapılmadı!";
+                    }
+
+
 
                 }
-
-
-
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError("TraceId: " + response.TraceID + $", {nameof(PayAsync)}: " + $"{e}");
+                    response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                    response.Status.Message = "Problem baş verdi!";
+                }
+                return response;
             }
-            catch (Exception e)
-            {
-                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(PayAsync)}: " + $"{e}");
-                response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Problem baş verdi!";
-            }
-            return response;
-
 
 
         }
@@ -135,8 +159,6 @@ namespace billkill.payment.service.Services.Implementation
                 var payment = _payments.AllQuery.FirstOrDefault(x => x.TransId == model.TransactionId);
                 if(payment != null) {
                    var result = await _invoices.AllQuery
-                  .Include(x => x.Subscriber)
-                  .ThenInclude(x => x.User)
                   .Include(x => x.Aggreement)
                   .Include(x => x.Spa)
                   .ThenInclude(x => x.Apartment)
@@ -145,16 +167,27 @@ namespace billkill.payment.service.Services.Implementation
                     if (result != null)
                     {
                         response.Response = new TerminalAfterPaymentResponseDto();
-                        response.Response.Subscriber = result.Subscriber.User.UserName;
+                        response.Response.Subscriber = result.Spa.Apartment.Name;
                         response.Response.SubscribtionName = result.Spa.Apartment.Address;
                         response.Response.Invoice = new InvoiceDto();
                         response.Response.Invoice.SpAgreementNo = result.Aggreement.MtkNum;
                         response.Response.Invoice.Debt = payment.Amount;
-                        response.Response.Invoice.Services = string.Join(",", _agreementServices.AllQuery.Include(x => x.Service).Where(x => x.AgreementId == result.AgreementId).ToList());
+                        var services = _agreementServices.AllQuery.Include(x => x.Service).Where(x => x.AgreementId == result.AgreementId).Select(x => x.Service.Name).ToList();
+                        response.Response.Invoice.Services = string.Join(",", services);
 
                     }
+                    else
+                    {
+                        response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                        response.Status.Message = "Müraciət üzrə nəticə tapılmadı!";
+                    }
                 }
-              
+                else
+                {
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    response.Status.Message = "Müraciət üzrə nəticə tapılmadı!";
+                }
+
 
             }
             catch (Exception e)

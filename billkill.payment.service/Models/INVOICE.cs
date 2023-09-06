@@ -9,9 +9,6 @@ namespace billkill.payment.service.Models
         [Column("ID"), Key]
         public int Id { get; set; }
 
-        [Column("SUBSCRIBER_ID")]
-        public int SubscriberId { get; set; }
-
         [Column("AGREEMENT_ID")]
         public int? AgreementId { get; set; }
 
@@ -22,16 +19,16 @@ namespace billkill.payment.service.Models
         public string? AboneNumber { get; set; }
             
         [Column("STATUS")]
-        public bool STATUS { get; set; }
+        public bool Status { get; set; }
 
         [Column("COMMON_DEBT")]
         public double CommonDebt { get; set; }
 
         [Column("LAST_MONTH_DEBT")]
-        public double LastMonthDebt { get; set; }
+        public double? LastMonthDebt { get; set; }
 
         [Column("THIS_MONTH_DEBT")]
-        public double ThisMonthDebt { get; set; }
+        public double? ThisMonthDebt { get; set; }
 
         [Column("CREATED_AT")]
         public DateTime? CreatedAt { get; set; }
@@ -45,7 +42,6 @@ namespace billkill.payment.service.Models
         [Column("UPDATED_BY")]
         public string? UpdatedBy { get; set; }
 
-        public virtual SUBSCRIBER Subscriber { get; set; }
         public virtual SP_ABONE Spa { get; set; }
         public virtual AGREEMENT Aggreement { get; set; }
 

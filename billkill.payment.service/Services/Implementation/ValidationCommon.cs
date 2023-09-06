@@ -21,6 +21,7 @@ namespace billkill.payment.service.Services.Implementation
 
                 case ErrorCodes.REQUIRED:
                 case ErrorCodes.FORMAT:
+                case ErrorCodes.ALREADY_PAID:
                     return StatusCodeModel.BAD_REQUEST;
 
                 case ErrorCodes.SYSTEM:

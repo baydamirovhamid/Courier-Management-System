@@ -10,7 +10,7 @@ namespace billkill.payment.service.Models
         public int Id { get; set; }
 
         [Column("INVOICE_ID")]
-        public int? InvoiceId { get; set; }
+        public int InvoiceId { get; set; }
 
         [Column("TYPE_ID")]
         public int? TypeId { get; set; }

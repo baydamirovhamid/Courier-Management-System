@@ -40,6 +40,7 @@ namespace billkill.payment.service.Infrastructure
         public DbSet<PAYMENT> PAYMENT { get; set; }
         public DbSet<INVOICE> INVOICE { get; set; }
         public DbSet<SUBSCRIBER> SUBSCRIBER { get; set; }
+        public DbSet<AGREEMENT_SERVICE> AGREEMENT_SERVICE { get; set; }
 
     }
 }
