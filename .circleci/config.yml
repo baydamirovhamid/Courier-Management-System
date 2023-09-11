@@ -23,7 +23,7 @@ jobs:
 workflows:
   deploy-test:
     when:
-      equal: [ develop, << pipeline.git.branch >> ]
+      equal: [ test, << pipeline.git.branch >> ]
     jobs:
       - build:
           context: DIGITAL_OCEAN_JAVID_MUSAYEV
