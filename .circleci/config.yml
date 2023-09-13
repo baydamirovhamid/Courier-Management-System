@@ -26,10 +26,13 @@ workflows:
       equal: [ test, << pipeline.git.branch >> ]
     jobs:
       - build:
-          context: image-registry
+          context:
+            - image-registry
           app-name: $APP_NAME_TEST
       - deploy:
-          context: digitalocean
+          context:
+            - digitalocean
+            - image-registry
           requires:
             - build
           app-name: $APP_NAME_TEST
