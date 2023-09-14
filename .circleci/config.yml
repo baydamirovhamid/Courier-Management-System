@@ -18,7 +18,7 @@ jobs:
       app-name:
         type: string
     steps:
-      - run: ssh $DIGITALOCEAN_SSH_USER@$DIGITALOCEAN_SSH_HOST 'docker stop "'<< parameters.app-name >>'" | true; docker rm "'<< parameters.app-name >>'" | true; docker login --username="'$REGISTRY_USER'" --password="'$REGISTRY_PWD'" "'$REGISTRY_HOST'" && docker pull "'$REGISTRY_HOST'"/"'<< parameters.app-name >>'" && docker run -d --network=userdefined --name "'<< parameters.app-name >>'" "'$REGISTRY_HOST'"/"'<< parameters.app-name >>'" && docker image prune -f'
+      - run: ssh $DIGITALOCEAN_SSH_USER@$DIGITALOCEAN_SSH_HOST 'docker stop "'<< parameters.app-name >>'" | true; docker rm "'<< parameters.app-name >>'" | true; docker login --username="'$REGISTRY_USER'" --password="'$REGISTRY_PWD'" "'$REGISTRY_HOST'" && docker pull "'$REGISTRY_HOST'"/"'<< parameters.app-name >>'" && docker run -d --network=billkill-bridge --name "'<< parameters.app-name >>'" "'$REGISTRY_HOST'"/"'<< parameters.app-name >>'" && docker image prune -f'
 
 workflows:
   deploy-test:
@@ -26,10 +26,13 @@ workflows:
       equal: [ test, << pipeline.git.branch >> ]
     jobs:
       - build:
-          context: DIGITAL_OCEAN_JAVID_MUSAYEV
+          context:
+            - image-registry
           app-name: $APP_NAME_TEST
       - deploy:
-          context: DIGITAL_OCEAN_JAVID_MUSAYEV
+          context:
+            - digitalocean
+            - image-registry
           requires:
             - build
           app-name: $APP_NAME_TEST
