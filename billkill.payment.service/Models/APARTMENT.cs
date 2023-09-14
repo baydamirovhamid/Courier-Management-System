@@ -15,7 +15,7 @@ namespace billkill.payment.service.Models
         public string? Phone { get; set; }
 
         [Column("VOLUME")]
-        public string? Volume { get; set; }
+        public double? Volume { get; set; }
 
         [Column("ADDRESS")]
         public string? Address { get; set; }

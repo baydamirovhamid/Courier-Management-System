@@ -8,6 +8,10 @@ namespace billkill.payment.service.Infrastructure
 {
     public class BillKillDbContext: IdentityDbContext<USER, EMPLOYEE_ROLE, int>
     {
+        public BillKillDbContext()
+        {
+        }
+
         public BillKillDbContext(DbContextOptions<BillKillDbContext> options)
            : base(options)
         {
@@ -41,6 +45,8 @@ namespace billkill.payment.service.Infrastructure
         public DbSet<INVOICE> INVOICE { get; set; }
         public DbSet<SUBSCRIBER> SUBSCRIBER { get; set; }
         public DbSet<AGREEMENT_SERVICE> AGREEMENT_SERVICE { get; set; }
+        public DbSet<API_KEY> API_KEY { get; set; }
+        
 
     }
 }

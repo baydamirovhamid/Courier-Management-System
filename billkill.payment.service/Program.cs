@@ -25,7 +25,6 @@ builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureDataProtectionTokenProvider();
 
 builder.Services.AddTransient<ITerminalService, TerminalService>();
-builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ISqlService, SqlService>();
 builder.Services.AddTransient<ICmdService, CmdService>();
 builder.Services.AddTransient<IJwtHandler, JwtHandler>();
@@ -62,6 +61,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.ConfigureCustomExceptionMiddleware();
+app.UseMiddleware<ApiKeyMiddleware>();
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 //app.UseClientRateLimiting();
 app.UseHttpsRedirection();
