@@ -10,6 +10,8 @@ namespace billkill.payment.service.Models
 
         [Column("NAME")]
         public string? Name { get; set; }
+        [Column("KEY")]
+        public string? Key { get; set; }
 
         [Column("CREATED_AT")]
         public DateTime? CreatedAt { get; set; }

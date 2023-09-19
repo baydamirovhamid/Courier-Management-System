@@ -104,6 +104,7 @@ namespace billkill.payment.service.Services.Implementation
                         payment.TransId = model.TransactionId;
                         payment.PaymentDate = model.PaymentDate;
                         payment.InvoiceId = invoice.Id;
+                        payment.TypeId = _invoiceTypes.AllQuery.FirstOrDefault(x => x.Key == "TERMINAL")?.Id;
                         payment.CreatedAt = new DateTime();
                         payment.UpdatedAt = new DateTime();
 
