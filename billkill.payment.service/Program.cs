@@ -61,8 +61,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.ConfigureCustomExceptionMiddleware();
-app.UseMiddleware<ApiKeyMiddleware>();
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseMiddleware<ApiKeyMiddleware>();
 //app.UseClientRateLimiting();
 app.UseHttpsRedirection();
 app.UseRouting();
