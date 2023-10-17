@@ -11,6 +11,6 @@ public partial class STATIC
     [Column("name")]
     public string? Name { get; set; }
 
-    [Column("KEY")]
+    [Column("key")]
     public string? Key { get; set; }
 }
