@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace reserva.user.backend.Models;
 
 public partial class STADIUM_FULLIED
 {    
-    [Column("id")]
+    [Column("id"), Key]
     public int Id { get; set; }
 
     [Column("stadium_id")]
@@ -19,13 +20,13 @@ public partial class STADIUM_FULLIED
     public int? EndTime { get; set; }
 
     [Column("created_at")]
-    public DateOnly? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     [Column("created_by")]
     public string? CreatedBy { get; set; }
 
     [Column("updated_at")]
-    public DateOnly? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     [Column("updated_by")]
     public string? UpdatedBy { get; set; }

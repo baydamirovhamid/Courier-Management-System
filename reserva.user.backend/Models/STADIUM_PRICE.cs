@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace reserva.user.backend.Models;
 
 public partial class STADIUM_PRICE
 {
-    [Column("id")]
+    [Column("id"), Key]
     public int Id { get; set; }
 
     [Column("price")]
