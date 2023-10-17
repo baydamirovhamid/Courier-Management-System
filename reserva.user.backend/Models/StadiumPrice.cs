@@ -13,7 +13,7 @@ public partial class StadiumPrice
 
     public int? StadiumId { get; set; }
 
-    public virtual Stadium? Stadium { get; set; }
+    public virtual STADIUM? Stadium { get; set; }
 
     public virtual TIME_TYPE? TimeType { get; set; }
 }

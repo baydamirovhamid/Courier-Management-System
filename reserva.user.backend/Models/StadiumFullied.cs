@@ -21,5 +21,5 @@ public partial class StadiumFullied
 
     public string? UpdatedBy { get; set; }
 
-    public virtual Stadium? Stadium { get; set; }
+    public virtual STADIUM? Stadium { get; set; }
 }

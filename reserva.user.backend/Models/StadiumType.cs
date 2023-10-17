@@ -11,5 +11,4 @@ public partial class StadiumType
 
     public string? Key { get; set; }
 
-    public virtual ICollection<Stadium> Stadia { get; set; } = new List<Stadium>();
 }
