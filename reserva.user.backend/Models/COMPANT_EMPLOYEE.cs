@@ -5,7 +5,7 @@ namespace reserva.user.backend.Models;
 
 public partial class COMPANT_EMPLOYEE
 {
-    [Column("id")]
+    [Column("id"), Key]
     public int Id { get; set; }
 
     [Column("name")]
