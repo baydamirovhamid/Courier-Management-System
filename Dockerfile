@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["billkill.payment.service/billkill.payment.service.csproj", "billkill.payment.service/"]
-RUN dotnet restore "billkill.payment.service/billkill.payment.service.csproj"
+COPY ["reserva.user.backend/reserva.user.backend.csproj", "reserva.user.backend/"]
+RUN dotnet restore "reserva.user.backend/reserva.user.backend.csproj"
 COPY . .
-WORKDIR "/src/billkill.payment.service"
-RUN dotnet build "billkill.payment.service.csproj" -c Release -o /app/build
+WORKDIR "/src/reserva.user.backend"
+RUN dotnet build "reserva.user.backend.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "billkill.payment.service.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "reserva.user.backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "billkill.payment.service.dll"]
+ENTRYPOINT ["dotnet", "reserva.user.backend.dll"]
