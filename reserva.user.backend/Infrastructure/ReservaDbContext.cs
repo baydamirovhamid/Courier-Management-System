@@ -35,6 +35,17 @@ namespace reserva.user.backend.Infrastructure
 
         public DbSet<USER> user { get; set; }
         public DbSet<USER_ROLE> user_role { get; set; }
-       
+        public DbSet<CLIENT> client { get; set; }
+        public DbSet<COMPANT_EMPLOYEE> company_employee { get; set; }
+        public DbSet<COMPANY> company { get; set; }
+        public DbSet<COMPANY_BRANCH> company_branch { get; set; }
+        public DbSet<RESERVE> reserve { get; set; }
+        public DbSet<STADIUM> stadium { get; set; }
+        public DbSet<STADIUM_FULLIED> stadium_fullied { get; set; }
+        public DbSet<STADIUM_PRICE> stadium_price { get; set; }
+        public DbSet<STADIUM_TYPE> stadium_type { get; set; }
+        //public DbSet<STADIUM_TYPE> static { get; set; }
+        public DbSet<TIME_TYPE> time_type { get; set; }
+
     }
 }
