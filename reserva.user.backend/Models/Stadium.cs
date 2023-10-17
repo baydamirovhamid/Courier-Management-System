@@ -29,7 +29,7 @@ public partial class Stadium
 
     public string? UpdatedBy { get; set; }
 
-    public virtual CompanyBranch? Branch { get; set; }
+    public virtual COMPANY_BRANCH? Branch { get; set; }
 
     public virtual ICollection<Reserve> Reserves { get; set; } = new List<Reserve>();
 
