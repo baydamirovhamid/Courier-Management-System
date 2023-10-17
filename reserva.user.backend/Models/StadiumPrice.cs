@@ -15,5 +15,5 @@ public partial class StadiumPrice
 
     public virtual Stadium? Stadium { get; set; }
 
-    public virtual TimeType? TimeType { get; set; }
+    public virtual TIME_TYPE? TimeType { get; set; }
 }

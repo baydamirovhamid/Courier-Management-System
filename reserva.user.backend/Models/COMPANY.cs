@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace reserva.user.backend.Models;
 
-public partial class Company
+public partial class COMPANY
 {
+    [Column("id"), Key]
     public int Id { get; set; }
-
+    [Column("name")]
     public string? Name { get; set; }
-
+    [Column("phone")]
     public string? Phone { get; set; }
-
+    [Column("email")]
     public string? Email { get; set; }
-
+    [Column("address")]
     public string? Address { get; set; }
-
-    public DateOnly? CreatedAt { get; set; }
-
+    [Column("created_at")]
+    public DateTime? CreatedAt { get; set; }
+    [Column("created_by")]
     public string? CreatedBy { get; set; }
-
-    public DateOnly? UpdatedAt { get; set; }
-
+    [Column("updated_at")]
+    public DateTime? UpdatedAt { get; set; }
+    [Column("updated_by")]
     public string? UpdatedBy { get; set; }
-
-    public virtual ICollection<CompanyBranch> CompanyBranches { get; set; } = new List<CompanyBranch>();
 }

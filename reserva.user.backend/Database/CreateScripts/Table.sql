@@ -6,9 +6,9 @@ CREATE TABLE "company" (
   "phone" varchar,
   "email" varchar,
   "address" varchar,
-  "created_at" date,
+  "created_at" timestamp,
   "created_by" varchar,
-  "updated_at" date,
+  "updated_at" timestamp,
   "updated_by" varchar
 );
 
@@ -20,9 +20,9 @@ CREATE TABLE "company_branch" (
   "phone" varchar,
   "address" varchar,
   "company_id" integer,
-  "created_at" date,
+  "created_at" timestamp,
   "created_by" varchar,
-  "updated_at" date,
+  "updated_at" timestamp,
   "updated_by" varchar
 );
 
@@ -37,9 +37,9 @@ CREATE TABLE "stadium" (
   "has_recording" integer,
   "min_price" integer,
   "max_price" integer,
-  "created_at" date,
+  "created_at" timestamp,
   "created_by" varchar,
-  "updated_at" date,
+  "updated_at" timestamp,
   "updated_by" varchar
 );
 
@@ -51,9 +51,9 @@ CREATE TABLE "stadium_fullied" (
   "stadium_id" integer,
   "start_time" integer,
   "end_time" integer,
-  "created_at" date,
+  "created_at" timestamp,
   "created_by" varchar,
-  "updated_at" date,
+  "updated_at" timestamp,
   "updated_by" varchar
 );
 
@@ -98,11 +98,11 @@ CREATE TABLE "reserve" (
   "id" integer PRIMARY KEY,
   "client_id" integer,
   "stadium_id" integer,
-  "date" date,
+  "date" timestamp,
   "total_amount" integer,
-  "created_at" date,
+  "created_at" timestamp,
   "created_by" varchar,
-  "updated_at" date,
+  "updated_at" timestamp,
   "updated_by" varchar,
   "is_deleted" integer
 );
@@ -116,10 +116,10 @@ CREATE TABLE "client" (
   "phone" varchar,
   "email" varchar,
   "user_id" integer,
-  "birthdate" date,
-  "created_at" date,
+  "birthdate" timestamp,
+  "created_at" timestamp,
   "created_by" varchar,
-  "updated_at" date,
+  "updated_at" timestamp,
   "updated_by" varchar
 );
 
@@ -132,9 +132,9 @@ CREATE TABLE "company_employee" (
   "phone" varchar,
   "email" varchar,
   "branch_id" integer,
-  "created_at" date,
+  "created_at" timestamp,
   "created_by" varchar,
-  "updated_at" date,
+  "updated_at" timestamp,
   "updated_by" varchar
 );
 

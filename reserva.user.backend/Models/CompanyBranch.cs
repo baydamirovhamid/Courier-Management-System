@@ -23,7 +23,7 @@ public partial class CompanyBranch
 
     public string? UpdatedBy { get; set; }
 
-    public virtual Company? Company { get; set; }
+    public virtual COMPANY? Company { get; set; }
 
     public virtual ICollection<CompanyEmployee> CompanyEmployees { get; set; } = new List<CompanyEmployee>();
 
