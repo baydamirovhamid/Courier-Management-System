@@ -6,7 +6,7 @@ namespace reserva.user.backend.Models;
 
 public partial class COMPANY_BRANCH
 {
-    [Column("id")]
+    [Column("id"), Key]
     public int Id { get; set; }
 
     [Column("name")]
