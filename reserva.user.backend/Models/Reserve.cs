@@ -34,7 +34,7 @@ public partial class Reserve
     [Column("update_by"), ]  
     public string? UpdatedBy { get; set; }
 
-    [Column("is_deleted"), ]  
+    [Column("is_deleted") , ]  
     public int? IsDeleted { get; set; }
 
     public virtual Stadium? Stadium { get; set; }
