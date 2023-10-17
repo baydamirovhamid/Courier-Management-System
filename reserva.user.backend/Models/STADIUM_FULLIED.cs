@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace reserva.user.backend.Models;
 
-public partial class StadiumFullied
+public partial class STADIUM_FULLIED
 {    
     [Column("id")]
     public int Id { get; set; }
