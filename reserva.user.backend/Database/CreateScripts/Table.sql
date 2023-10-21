@@ -84,9 +84,9 @@ CREATE TABLE "time_type" (
   "interval" varchar
 );
 
--- DROP TABLE "static"
+-- DROP TABLE "static_data"
 
-CREATE TABLE "static" (
+CREATE TABLE "static_data" (
   "id" integer PRIMARY KEY,
   "name" varchar,
   "key" varchar

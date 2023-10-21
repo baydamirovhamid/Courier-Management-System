@@ -14,11 +14,11 @@ namespace reserva.user.backend.Controllers
             _lookupService = lookupService;
         }
 
-        //[HttpGet, Route("get-companies")]
-        //public IActionResult GetCompanies()
-        //{
-        //    return Ok(new { Result = _lookupService.GetCompanies() });
-        //}
+        [HttpGet, Route("get-static-data")]
+        public IActionResult GetStaticDatas()
+        {
+            return Ok(new { Result = _lookupService.GetStaticDatas() });
+        }
 
 
     }

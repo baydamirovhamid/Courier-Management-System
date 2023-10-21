@@ -8,20 +8,19 @@ namespace reserva.user.backend.Services.Implementation
 {
     public class LookupService : ILookupService
     {
-       // private readonly IRepository<COMPANY> _companies;
+        private readonly IRepository<STATIC_DATA> _staticDatas;
       
         public LookupService(
-            //IRepository<COMPANY> companies
+            IRepository<STATIC_DATA> staticDatas
             )
         {
-           // _companies = companies;
+            _staticDatas = staticDatas;
         }
 
-        //public IQueryable<COMPANY> GetCompanies()
-        //{
-        //    return _companies.AllQuery;
-        //}
-
+        public IQueryable<STATIC_DATA> GetStaticDatas()
+        {
+            return _staticDatas.AllQuery;
+        }
 
     }
 }

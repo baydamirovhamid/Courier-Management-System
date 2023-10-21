@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace reserva.user.backend.Models;
 
-public partial class STATIC
+public partial class STATIC_DATA
 {
-    [Column("id")]
+    [Column("id"), Key]
     public int Id { get; set; }
 
     [Column("name")]
