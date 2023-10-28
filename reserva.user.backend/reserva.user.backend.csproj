@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <Folder Include="DTO\RequestModels\FilterModels\" />
-    <Folder Include="DTO\ResponseModels\Inner\" />
   </ItemGroup>
 
 </Project>
