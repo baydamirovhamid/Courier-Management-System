@@ -9,6 +9,8 @@ namespace reserva.user.backend.Extensions
         public MappingEntity()
         {
             CreateMap<STATIC_DATA, StaticVM>().ReverseMap();
+            CreateMap<TIME_TYPE, TimeTypeVM>().ReverseMap();
+
         }
     }
 }
