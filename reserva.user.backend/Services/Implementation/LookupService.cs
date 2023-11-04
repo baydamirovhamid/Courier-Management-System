@@ -13,14 +13,17 @@ namespace reserva.user.backend.Services.Implementation
     {
         private readonly IRepository<STATIC_DATA> _staticDataRepository;
         private readonly IRepository<TIME_TYPE> _timeTypeRepository;
-        private readonly IMapper _mapper;
-        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IMapper mapper)
+        private readonly IRepository<STADIUM_TYPE> _stadiumTypeRepository; 
+       private readonly IMapper _mapper;
+        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IRepository<STADIUM_TYPE> stadiumTypeRepository, IMapper mapper)
         {
             _staticDataRepository = staticDataRepository;
             _timeTypeRepository = timeTypeRepository;
+            _stadiumTypeRepository = stadiumTypeRepository;
             _mapper = mapper;
         }
 
+        
         public async Task<ResponseObject<StaticVM>> GetStaticDataAsync(ResponseObject<StaticVM> response, string key)
         {
             try
@@ -60,5 +63,24 @@ namespace reserva.user.backend.Services.Implementation
         }
         return response;
     }
+
+        public async Task<ResponseList<StadiumTypeVM>> GetStadiumTypeAsync(ResponseList<StadiumTypeVM> response)
+        {
+            try
+            {
+                var result = await _staticDataRepository.AllQuery.ToListAsync();
+                response.Data = _mapper.Map<List<StadiumTypeVM>>(result);
+               
+            }
+            catch (Exception ex)
+            {
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
+
+       
+    }
 }
-}
+
