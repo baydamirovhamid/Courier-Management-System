@@ -10,6 +10,6 @@ namespace reserva.user.backend.Services.Interface
         Task<ResponseList<TimeTypeVM>> GetTimeTypeAsync(ResponseList<TimeTypeVM> response);
         Task<ResponseList<StadiumTypeVM>> GetStadiumTypeAsync(ResponseList<StadiumTypeVM> response);
         Task<ResponseList<CompanyVM>> GetCompanyAsync(ResponseList<CompanyVM> response);
-
+        Task<ResponseList<CompanyBranch>> GetCompanyBranch(ResponseList<CompanyBranch> response);
     }
 }

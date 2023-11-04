@@ -12,7 +12,7 @@ namespace reserva.user.backend.Extensions
             CreateMap<TIME_TYPE, TimeTypeVM>().ReverseMap();
             CreateMap<STADIUM_TYPE, StadiumTypeVM>().ReverseMap();
             CreateMap<COMPANY, CompanyVM>().ReverseMap();
-
+            CreateMap<COMPANY_BRANCH, CompanyBranch>().ReverseMap();
         }
     }
 }

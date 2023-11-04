@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.ResponseModels.Inner;
 using reserva.user.backend.DTO.ResponseModels.Main;
@@ -99,7 +100,22 @@ namespace reserva.user.backend.Services.Implementation
             return response;
         }
 
-       
+
+        public async Task<ResponseList<CompanyBranch>> GetCompanyBranch(ResponseList<CompanyBranch> response)
+        {
+            try
+            {
+                var result = await _staticDataRepository.AllQuery.ToListAsync();
+                response.Data = _mapper.Map<List<CompanyBranch>>(result);
+              
+            }
+            catch (Exception ex)
+            {
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
     }
 }
 

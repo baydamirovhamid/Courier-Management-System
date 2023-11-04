@@ -102,6 +102,25 @@ namespace reserva.user.backend.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("get-company-branch")]
+        public async Task<IActionResult> GetCompanyBranch()
+        {
+            ResponseList<CompanyBranch> response = new ResponseList<CompanyBranch>();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _lookupService.GetCompanyBranch(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
 
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
     }
 }
