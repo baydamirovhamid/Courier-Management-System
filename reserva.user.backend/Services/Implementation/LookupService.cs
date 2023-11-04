@@ -13,11 +13,15 @@ namespace reserva.user.backend.Services.Implementation
     {
         private readonly IRepository<STATIC_DATA> _staticDataRepository;
         private readonly IRepository<TIME_TYPE> _timeTypeRepository;
+        private readonly IRepository<COMPANY> _companyRepository;
+
         private readonly IMapper _mapper;
-        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IMapper mapper)
+        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IRepository<COMPANY> companyRepository, IMapper mapper)
         {
             _staticDataRepository = staticDataRepository;
             _timeTypeRepository = timeTypeRepository;
+            _companyRepository = companyRepository;
+
             _mapper = mapper;
         }
 
@@ -60,5 +64,21 @@ namespace reserva.user.backend.Services.Implementation
         }
         return response;
     }
-}
+        public async Task<ResponseList<CompanyVM>> GetCompanyAsync(ResponseList<CompanyVM> response)
+        {
+            try
+            {
+                var result = await _companyRepository.AllQuery.ToListAsync();
+
+                response.Data = _mapper.Map<List<CompanyVM>>(result);
+
+            }
+            catch (Exception ex)
+            {
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
+    }
 }
