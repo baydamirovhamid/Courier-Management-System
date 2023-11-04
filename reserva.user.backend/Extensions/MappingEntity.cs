@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using reserva.user.backend.DTO.ResponseModels.Inner;
 using reserva.user.backend.Models;
 
 namespace reserva.user.backend.Extensions
@@ -7,7 +8,7 @@ namespace reserva.user.backend.Extensions
     {
         public MappingEntity()
         {
-        
+            CreateMap<STATIC_DATA, StaticVM>().ReverseMap();
         }
     }
 }
