@@ -6,6 +6,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 using System.Diagnostics;
 using reserva.user.backend.Services.Interface;
 using reserva.user.backend.DTO.ResponseModels.Inner;
+using reserva.user.backend.Models;
 
 
 namespace reserva.user.backend.Controllers
@@ -49,6 +50,27 @@ namespace reserva.user.backend.Controllers
             try
             {
                 response = await _lookupService.GetTimeTypeAsync(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
+
+        [HttpGet]
+        [Route("company")]
+        public async Task<IActionResult> GetCompany()
+        {
+            ResponseList<CompanyVM> response = new ResponseList<CompanyVM>();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _lookupService.GetCompanyAsync(response);
                 return Ok(response);
             }
             catch (Exception e)

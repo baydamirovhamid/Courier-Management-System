@@ -9,6 +9,7 @@ namespace reserva.user.backend.Services.Interface
         Task<ResponseObject<StaticVM>> GetStaticDataAsync(ResponseObject<StaticVM> response, string key);
         Task<ResponseList<TimeTypeVM>> GetTimeTypeAsync(ResponseList<TimeTypeVM> response);
         Task<ResponseList<StadiumTypeVM>> GetStadiumTypeAsync(ResponseList<StadiumTypeVM> response);
+        Task<ResponseList<CompanyVM>> GetCompanyAsync(ResponseList<CompanyVM> response);
 
     }
 }

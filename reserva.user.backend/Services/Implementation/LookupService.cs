@@ -14,12 +14,15 @@ namespace reserva.user.backend.Services.Implementation
         private readonly IRepository<STATIC_DATA> _staticDataRepository;
         private readonly IRepository<TIME_TYPE> _timeTypeRepository;
         private readonly IRepository<STADIUM_TYPE> _stadiumTypeRepository; 
-       private readonly IMapper _mapper;
-        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IRepository<STADIUM_TYPE> stadiumTypeRepository, IMapper mapper)
+        private readonly IRepository<COMPANY> _companyRepository;
+        private readonly IMapper _mapper;
+        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IRepository<STADIUM_TYPE> stadiumTypeRepository,  IRepository<COMPANY> companyRepository, IMapper mapper)
         {
             _staticDataRepository = staticDataRepository;
             _timeTypeRepository = timeTypeRepository;
             _stadiumTypeRepository = stadiumTypeRepository;
+            _companyRepository = companyRepository;
+
             _mapper = mapper;
         }
 
@@ -70,7 +73,23 @@ namespace reserva.user.backend.Services.Implementation
             {
                 var result = await _staticDataRepository.AllQuery.ToListAsync();
                 response.Data = _mapper.Map<List<StadiumTypeVM>>(result);
-               
+                 
+            }
+            catch (Exception ex)
+            {
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
+        public async Task<ResponseList<CompanyVM>> GetCompanyAsync(ResponseList<CompanyVM> response)
+        {
+            try
+            {
+                var result = await _companyRepository.AllQuery.ToListAsync();
+
+                response.Data = _mapper.Map<List<CompanyVM>>(result);
+
             }
             catch (Exception ex)
             {

@@ -11,6 +11,8 @@ namespace reserva.user.backend.Extensions
             CreateMap<STATIC_DATA, StaticVM>().ReverseMap();
             CreateMap<TIME_TYPE, TimeTypeVM>().ReverseMap();
             CreateMap<STADIUM_TYPE, StadiumTypeVM>().ReverseMap();
+            CreateMap<COMPANY, CompanyVM>().ReverseMap();
+
         }
     }
 }
