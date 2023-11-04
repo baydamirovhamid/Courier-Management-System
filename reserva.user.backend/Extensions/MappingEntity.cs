@@ -9,6 +9,7 @@ namespace reserva.user.backend.Extensions
         public MappingEntity()
         {
             CreateMap<STATIC_DATA, StaticVM>().ReverseMap();
+            CreateMap<STADIUM_TYPE, StadiumTypeVM>().ReverseMap();
         }
     }
 }

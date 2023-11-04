@@ -20,15 +20,15 @@ namespace reserva.user.backend.Controllers
         }
 
         [HttpGet]
-        [Route("get-static-data")]
-        public async Task<IActionResult> GetStaticData(string key)
+        [Route("get-stadium-type")]
+        public async Task<IActionResult> GetStadiumTypeData()
         {
-            ResponseObject<StaticVM> response = new ResponseObject<StaticVM>();
+            ResponseList<StadiumTypeVM> response = new ResponseList<StadiumTypeVM>();
             response.Status = new StatusModel();
             response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
             try
             {
-                response = await _lookupService.GetStaticDataAsync(response, key);
+                response = await _lookupService.GetStadiumTypeAsync(response);
                 return Ok(response);
             }
             catch (Exception e)

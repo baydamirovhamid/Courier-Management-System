@@ -12,11 +12,16 @@ namespace reserva.user.backend.Services.Implementation
     public class LookupService : ILookupService
     {
         private readonly IRepository<STATIC_DATA> _staticDataRepository;
+        private readonly IRepository<STADIUM_TYPE> _stadiumTypeRepository;
         private readonly IMapper _mapper;
-        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IMapper mapper)
+        
+
+        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<STADIUM_TYPE> stadiumTypeRepository, IMapper mapper)
         {
             _staticDataRepository = staticDataRepository;
+            _stadiumTypeRepository = stadiumTypeRepository;
             _mapper = mapper;
+            
         }
 
         public async Task<ResponseObject<StaticVM>> GetStaticDataAsync(ResponseObject<StaticVM> response, string key)
@@ -43,6 +48,22 @@ namespace reserva.user.backend.Services.Implementation
         }
 
 
+        public async Task<ResponseList<StadiumTypeVM>> GetStadiumTypeAsync(ResponseList<StadiumTypeVM> response)
+        {
+            try
+            {
+                var result = await _staticDataRepository.AllQuery.ToListAsync();
+                response.Data = _mapper.Map<List<StadiumTypeVM>>(result);
+               
+            }
+            catch (Exception ex)
+            {
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
+       
     }
 }
