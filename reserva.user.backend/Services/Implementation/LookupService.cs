@@ -12,10 +12,12 @@ namespace reserva.user.backend.Services.Implementation
     public class LookupService : ILookupService
     {
         private readonly IRepository<STATIC_DATA> _staticDataRepository;
+        private readonly IRepository<TIME_TYPE> _timeTypeRepository;
         private readonly IMapper _mapper;
-        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IMapper mapper)
+        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IMapper mapper)
         {
             _staticDataRepository = staticDataRepository;
+            _timeTypeRepository = timeTypeRepository;
             _mapper = mapper;
         }
 
@@ -23,8 +25,8 @@ namespace reserva.user.backend.Services.Implementation
         {
             try
             {
-             var result = await _staticDataRepository.AllQuery.FirstOrDefaultAsync(x=>x.Key == key);
-                if(result == null)
+                var result = await _staticDataRepository.AllQuery.FirstOrDefaultAsync(x => x.Key == key);
+                if (result == null)
                 {
                     response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
                     response.Status.Message = "Tapılmadı!";
@@ -34,15 +36,29 @@ namespace reserva.user.backend.Services.Implementation
                     response.Response = _mapper.Map<StaticVM>(result);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.Status.ErrorCode = ErrorCodes.DB;
                 response.Status.Message = "Problem baş verdi!";
             }
             return response;
         }
-
-
-
+    
+       public async Task<ResponseList<TimeTypeVM>> GetTimeTypeAsync(ResponseList<TimeTypeVM> response)
+    {
+        try
+        {
+            var result = await _timeTypeRepository.AllQuery.ToListAsync();
+          
+            response.Data = _mapper.Map<List<TimeTypeVM>>(result);
+            
+        }
+        catch (Exception ex)
+        {
+            response.Status.ErrorCode = ErrorCodes.DB;
+            response.Status.Message = "Problem baş verdi!";
+        }
+        return response;
     }
+}
 }

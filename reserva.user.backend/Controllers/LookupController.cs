@@ -33,7 +33,27 @@ namespace reserva.user.backend.Controllers
             }
             catch (Exception e)
             {
-               
+
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
+        [HttpGet]
+        [Route("get-time-type")]
+        public async Task<IActionResult> GetTimeTypeData()
+        {
+            ResponseList<TimeTypeVM> response = new ResponseList<TimeTypeVM>();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _lookupService.GetTimeTypeAsync(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
                 response.Status.Message = "Sistemdə xəta baş verdi.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
