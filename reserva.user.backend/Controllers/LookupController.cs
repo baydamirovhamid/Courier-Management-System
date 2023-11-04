@@ -82,7 +82,7 @@ namespace reserva.user.backend.Controllers
         }
 
         [HttpGet]
-        [Route("company")]
+        [Route("get-company")]
         public async Task<IActionResult> GetCompany()
         {
             ResponseList<CompanyVM> response = new ResponseList<CompanyVM>();

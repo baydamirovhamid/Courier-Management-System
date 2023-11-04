@@ -16,14 +16,16 @@ namespace reserva.user.backend.Services.Implementation
         private readonly IRepository<TIME_TYPE> _timeTypeRepository;
         private readonly IRepository<STADIUM_TYPE> _stadiumTypeRepository; 
         private readonly IRepository<COMPANY> _companyRepository;
+        private readonly IRepository<COMPANY_BRANCH> _companyBranchRepository;
+
         private readonly IMapper _mapper;
-        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IRepository<STADIUM_TYPE> stadiumTypeRepository,  IRepository<COMPANY> companyRepository, IMapper mapper)
+        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IRepository<STADIUM_TYPE> stadiumTypeRepository,  IRepository<COMPANY> companyRepository, IRepository<COMPANY_BRANCH> companyBranchRepository, IMapper mapper)
         {
             _staticDataRepository = staticDataRepository;
             _timeTypeRepository = timeTypeRepository;
             _stadiumTypeRepository = stadiumTypeRepository;
             _companyRepository = companyRepository;
-
+            _companyBranchRepository = companyBranchRepository;
             _mapper = mapper;
         }
 
@@ -72,7 +74,7 @@ namespace reserva.user.backend.Services.Implementation
         {
             try
             {
-                var result = await _staticDataRepository.AllQuery.ToListAsync();
+                var result = await _stadiumTypeRepository.AllQuery.ToListAsync();
                 response.Data = _mapper.Map<List<StadiumTypeVM>>(result);
                  
             }
@@ -105,7 +107,7 @@ namespace reserva.user.backend.Services.Implementation
         {
             try
             {
-                var result = await _staticDataRepository.AllQuery.ToListAsync();
+                var result = await _companyBranchRepository.AllQuery.ToListAsync();
                 response.Data = _mapper.Map<List<CompanyBranch>>(result);
               
             }
