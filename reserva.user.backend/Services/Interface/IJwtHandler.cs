@@ -6,6 +6,6 @@ namespace reserva.user.backend.Services.Interface
 {
     public interface IJwtHandler
     {
-        JwtResponse CreateToken(UserClaims claims);
+        JwtResponse CreateToken(JwtCustomClaims claims);
     }
 }

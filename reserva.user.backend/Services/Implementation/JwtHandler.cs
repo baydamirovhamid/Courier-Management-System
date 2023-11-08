@@ -13,7 +13,7 @@ namespace reserva.user.backend.Services.Implementation
     public class JwtHandler: IJwtHandler
     {
         AppConfiguration config = new AppConfiguration();
-        public JwtResponse CreateToken(UserClaims model)
+        public JwtResponse CreateToken(JwtCustomClaims model)
         {
             var now = DateTime.Now;
             var unixTimeSeconds = new DateTimeOffset(now).ToUnixTimeSeconds();
@@ -21,8 +21,8 @@ namespace reserva.user.backend.Services.Implementation
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokeOptions = new JwtSecurityToken(
                 claims: new Claim[] {
-                    new Claim(nameof(model.Tin), model.Tin.ToString()),
-                    new Claim(nameof(model.Name), model.Name)
+                    new Claim(nameof(model.UserId), model.UserId.ToString()),
+                    new Claim(nameof(model.UserName), model.UserName)
                 },
                 expires: DateTime.Now.AddHours(8),
                 signingCredentials: signinCredentials

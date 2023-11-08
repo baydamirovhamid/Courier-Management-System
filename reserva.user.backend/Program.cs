@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using NLog.Extensions.Logging;
 using Npgsql.Internal.TypeHandlers.NetworkHandlers;
 using billkill.payment.service.Models;
+using billkill.manager.backend.Services.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddTransient<IJwtHandler, JwtHandler>();
 builder.Services.AddTransient<ILookupService, LookupService>();
 builder.Services.AddTransient<IValidationCommon, ValidationCommon>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
 builder.Services.AddDbContext<ReservaDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
