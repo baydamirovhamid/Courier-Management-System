@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using reserva.user.backend.DTO.HelperModels;
 using reserva.user.backend.DTO.HelperModels.Const;
+using reserva.user.backend.DTO.HelperModels.Jwt;
 using reserva.user.backend.DTO.RequestModels.Auth;
 using reserva.user.backend.DTO.ResponseModels.Main;
 using reserva.user.backend.Services.Interface;
@@ -57,185 +58,123 @@ namespace reserva.user.backend.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("register-employee")]
-        //public async Task<IActionResult> RegisterEmployeeAsync(RegisterEmployeeDto model)
-        //{
-        //    ResponseSimple response = new ResponseSimple();
-        //    response.Status = new StatusModel();
-        //    response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-        //    try
-        //    {
-        //        response = await _authService.RegisterEmployeeAsync(response, model);
-        //        if (response.Status.ErrorCode != 0)
-        //        {
-        //            return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
-        //        }
-        //        else
-        //        {
-        //            return Ok(response);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(RegisterEmployeeAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Sistemdə xəta baş verdi.";
-        //        return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-        //    }
-        //}
 
-        //[HttpPost]
-        //[Route("login-user")]
-        //public async Task<IActionResult> LoginUserAsync(LoginDto model)
-        //{
-        //    ResponseObject<JwtResponse> response = new ResponseObject<JwtResponse>();
-        //    response.Status = new StatusModel();
-        //    response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-        //    try
-        //    {
-        //        response = await _authService.LoginUserAsync(response, model);
-        //        if (response.Status.ErrorCode != 0)
-        //        {
-        //            return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
-        //        }
-        //        else
-        //        {
-        //            return Ok(response);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginUserAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Sistemdə xəta baş verdi.";
-        //        return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-        //    }
-        //}
+        [HttpPost]
+        [Route("login-user")]
+        public async Task<IActionResult> LoginUserAsync(LoginDto model)
+        {
+            ResponseObject<JwtResponse> response = new ResponseObject<JwtResponse>();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _authService.LoginAsync(response, model);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginUserAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
 
-        //[HttpPost]
-        //[Route("login-employee")]
-        //public async Task<IActionResult> LoginEmployeeAsync(LoginDto model)
-        //{
-        //    ResponseObject<JwtResponse> response = new ResponseObject<JwtResponse>();
-        //    response.Status = new StatusModel();
-        //    response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-        //    try
-        //    {
-        //        response = await _authService.LoginEmployeeAsync(response, model);
-        //        if (response.Status.ErrorCode != 0)
-        //        {
-        //            return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
-        //        }
-        //        else
-        //        {
-        //            return Ok(response);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginEmployeeAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "SytemError";
-        //        return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-        //    }
-        //}
+        [HttpPost]
+        [Route("forgot-password")]
+        public async Task<IActionResult> ForgotPasswordAsync(string email)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
 
-        //[HttpPost]
-        //[Route("forgot-password")]
-        //public async Task<IActionResult> ForgotPasswordAsync(string email)
-        //{
-        //    ResponseSimple response = new ResponseSimple();
-        //    response.Status = new StatusModel();
-        //    response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-        //    try
-        //    {
+                response = await _authService.ForgotPasswordAsync(response, email);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ForgotPasswordAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
 
-        //        response = await _authService.ForgotPasswordAsync(response, email);
-        //        if (response.Status.ErrorCode != 0)
-        //        {
-        //            return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
-        //        }
-        //        else
-        //        {
-        //            return Ok(response);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ForgotPasswordAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Sistemdə xəta baş verdi.";
-        //        return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-        //    }
-        //}
 
-        //[HttpGet]
-        //[Route("reset-password")]
-        //public async Task<IActionResult> ResetPasswordAsync(string token, string email)
-        //{
-        //    var model = new ResetPasswordDto { Token = token, Email = email };
-        //    return Ok(model);
-        //}
+        [HttpPost]
+        [Route("reset-password")]
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto model)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
 
-        //[HttpPost]
-        //[Route("reset-password")]
-        //public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto model)
-        //{
-        //    ResponseSimple response = new ResponseSimple();
-        //    response.Status = new StatusModel();
-        //    response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-        //    try
-        //    {
+                response = await _authService.ResetPasswordAsync(response, model);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ResetPasswordAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
 
-        //        response = await _authService.ResetPasswordAsync(response, model);
-        //        if (response.Status.ErrorCode != 0)
-        //        {
-        //            return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
-        //        }
-        //        else
-        //        {
-        //            return Ok(response);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ResetPasswordAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Sistemdə xəta baş verdi.";
-        //        return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-        //    }
-        //}
-
-        //[HttpPost]
-        //[Route("change-password")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDto model)
-        //{
-        //    ResponseSimple response = new ResponseSimple();
-        //    response.Status = new StatusModel();
-        //    response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-        //    try
-        //    {
-        //        var userId = Convert.ToInt32(User.Claims.First(x => x.Type == "Id").Value);
-        //        model.UserId = userId;
-        //        response = await _authService.ChangePasswordAsync(response, model);
-        //        if (response.Status.ErrorCode != 0)
-        //        {
-        //            return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
-        //        }
-        //        else
-        //        {
-        //            return Ok(response);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ChangePasswordAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Sistemdə xəta baş verdi.";
-        //        return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-        //    }
-        //}
+        [HttpPost]
+        [Route("change-password")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDto model)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                var userId = Convert.ToInt32(User.Claims.First(x => x.Type == "UserId").Value);
+                model.UserId = userId;
+                response = await _authService.ChangePasswordAsync(response, model);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ChangePasswordAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
     }
 }

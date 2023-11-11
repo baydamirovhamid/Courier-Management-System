@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using reserva.user.backend.DTO.HelperModels.Jwt;
 using reserva.user.backend.DTO.RequestModels.Auth;
 using reserva.user.backend.DTO.ResponseModels.Inner;
 using reserva.user.backend.Models;
@@ -16,6 +17,10 @@ namespace reserva.user.backend.Extensions
             CreateMap<COMPANY_BRANCH, CompanyBranch>().ReverseMap();
 
             CreateMap<USER, RegisterDto>().ReverseMap();
+            CreateMap<USER, JwtCustomClaims>()
+                .ForMember(dest => dest.UserId, opts => opts.MapFrom(src => src.Id))
+                .ReverseMap();
+
         }
     }
 }

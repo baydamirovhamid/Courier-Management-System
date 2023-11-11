@@ -66,204 +66,141 @@ namespace billkill.manager.backend.Services.Implementation
             return response;
         }
 
-        //public async Task<ResponseObject<JwtResponse>> LoginUserAsync(ResponseObject<JwtResponse> response, LoginDto model)
-        //{
-        //    try
-        //    {
-        //        var user = await _userManager.FindByEmailAsync(model.UserName);
-        //        if (user == null)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "İstifadəçi adı və ya şifrə yanlışdır!";
-        //            return response;
-        //        }
-        //        var result = await _userManager.CheckPasswordAsync(user, model.Password);
-        //        if (!result)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "İstifadəçi adı və ya şifrə yanlışdır!";
-        //            return response;
-        //        }
-        //        if (!(await _signInManager.CanSignInAsync(user)))
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "Daxil olmaq mümkün olmadı!";
-        //            return response;
-        //        }
-        //        response.Response = _jwtHandler.CreateTokenForUser(user);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginUserAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+        public async Task<ResponseObject<JwtResponse>> LoginAsync(ResponseObject<JwtResponse> response, LoginDto model)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(model.UserName);
+                if (user == null)
+                {
+                    user = await _userManager.FindByNameAsync(model.UserName);
+                    if(user == null)
+                    {
+                        response.Status.ErrorCode = ErrorCodes.AUTH;
+                        response.Status.Message = "İstifadəçi adı və ya şifrə yanlışdır!";
+                        return response;
+                    }
+                  
+                }
+              
+                var result = await _userManager.CheckPasswordAsync(user, model.Password);
+                if (!result)
+                {
+                    response.Status.ErrorCode = ErrorCodes.AUTH;
+                    response.Status.Message = "İstifadəçi adı və ya şifrə yanlışdır!";
+                    return response;
+                }
+                if (!(await _signInManager.CanSignInAsync(user)))
+                {
+                    response.Status.ErrorCode = ErrorCodes.AUTH;
+                    response.Status.Message = "Daxil olmaq mümkün olmadı!";
+                    return response;
+                }
+                var claims = _mapper.Map<JwtCustomClaims>(user);
+                response.Response = _jwtHandler.CreateToken(claims);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
-        //public async Task<ResponseObject<JwtResponse>> LoginEmployeeAsync(ResponseObject<JwtResponse> response, LoginDto model)
-        //{
-        //    try
-        //    {
-        //        var user = await _userManager.FindByEmailAsync(model.UserName);
-        //        if (user == null)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "UserOrPassword";
-        //            return response;
-        //        }
-        //        var result = await _userManager.CheckPasswordAsync(user, model.Password);
-        //        if (!result)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "UserOrPassword";
-        //            return response;
-        //        }
-        //        if (!(await _signInManager.CanSignInAsync(user)))
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "NotAccess";
-        //            return response;
-        //        }
-        //        var employee = await _employee.AllQuery.FirstOrDefaultAsync(x => x.UserId == user.Id);
-        //        employee.User = user;
-        //        response.Response = _jwtHandler.CreateTokenForEmployee(employee);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginUserAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "ErrorHappened";
-        //    }
-        //    return response;
-        //}
+        public async Task<ResponseSimple> ForgotPasswordAsync(ResponseSimple response, string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    response.Status.Message = "Belə bir user tapılmadı!";
+                    return response;
+                }
 
-        //public async Task<ResponseSimple> ForgotPasswordAsync(ResponseSimple response, string email)
-        //{
-        //    try
-        //    {
-        //        var user = await _userManager.FindByEmailAsync(email);
-        //        if (user == null)
-        //        {
-        //            await Task.Delay(2188);
-        //            response.Status.Message = "Şifrəni yeniləmək üçün emailinizə link göndərildi!";
-        //            return response;
-        //        }
+                var token = await GeneratePasswordResetTokenAsync(user);
+                token = HttpUtility.UrlEncode(token);
+                var link = config.MailUrl + $"reset-password?token={token}&email={email}";
+                _emailService.SendEmailForgetPassword(email, link);
+                response.Status.Message = "Şifrəni yeniləmək üçün emailinizə link göndərildi!";
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
-        //        var token = await GeneratePasswordResetTokenAsync(user);
-        //        token = HttpUtility.UrlEncode(token);
-        //        var link = config.MailUrl + $"reset-password?token={token}&email={email}";
-        //        _emailService.SendEmailForgetPassword(email, link);
-        //        response.Status.Message = "Şifrəni yeniləmək üçün emailinizə link göndərildi!";
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginUserAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+        public async Task<ResponseSimple> ResetPasswordAsync(ResponseSimple response, ResetPasswordDto model)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    response.Status.Message = "Belə bir user tapılmadı!";
+                    return response;
+                }
 
-        //public async Task<ResponseSimple> ResetPasswordAsync(ResponseSimple response, ResetPasswordDto model)
-        //{
-        //    try
-        //    {
-        //        var user = await _userManager.FindByEmailAsync(model.Email);
-        //        if (user == null)
-        //        {
-        //            await Task.Delay(2188);
-        //            response.Status.Message = "Şifrə yeniləndi!";
-        //            return response;
-        //        }
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (!result.Succeeded)
+                {
+                    response.Status.ErrorCode = ErrorCodes.AUTH;
+                    response.Status.Message = "Şifrə yenilənmədi!";
+                    return response;
+                }
 
-        //        var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-        //        if (!result.Succeeded)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "Şifrə yenilənmədi!";
-        //            return response;
-        //        }
+                response.Status.Message = "Şifrə yeniləndi!";
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ResetPasswordAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
-        //        response.Status.Message = "Şifrə yeniləndi!";
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ResetPasswordAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
 
-        //public async Task<ResponseSimple> RegisterEmployeeAsync(ResponseSimple response, RegisterEmployeeDto model)
-        //{
-        //    var user = _mapper.Map<USER>(model);
+        public async Task<ResponseSimple> ChangePasswordAsync(ResponseSimple response, ChangePasswordDto model)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId.ToString());
+                if (user == null)
+                {
+                    response.Status.Message = "Belə bir user tapılmadı!";
+                    return response;
+                }
 
-        //    try
-        //    {
-        //        var result = await _userManager.CreateAsync(user, model.Password);
-        //        if (!result.Succeeded)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //            response.Status.Message = "Problem baş verdi!";
-        //        }
-        //        else
-        //        {
-        //            var employee = _mapper.Map<EMPLOYEE>(model);
-        //            employee.UserId = user.Id;
-        //            _employee.Insert(employee);
-        //            await _employee.SaveAsync();
-        //            response.Status.Message = "Uğurla əlavə olundu!";
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _userManager.DeleteAsync(user);
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(RegisterEmployeeAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (!result.Succeeded)
+                {
+                    response.Status.ErrorCode = ErrorCodes.AUTH;
+                    response.Status.Message = "Şifrə yenilənmədi!";
+                    return response;
+                }
 
-        //public async Task<ResponseSimple> ChangePasswordAsync(ResponseSimple response, ChangePasswordDto model)
-        //{
-        //    try
-        //    {
-        //        var user = await _userManager.FindByIdAsync(model.UserId.ToString());
-        //        if (user == null)
-        //        {
-        //            await Task.Delay(2188);
-        //            response.Status.Message = "Şifrə yeniləndi!";
-        //            return response;
-        //        }
-
-        //        var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-        //        if (!result.Succeeded)
-        //        {
-        //            response.Status.ErrorCode = ErrorCodes.AUTH;
-        //            response.Status.Message = "Şifrə yenilənmədi!";
-        //            return response;
-        //        }
-
-        //        response.Status.Message = "Şifrə yeniləndi!";
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ChangePasswordAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.SYSTEM;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+                response.Status.Message = "Şifrə yeniləndi!";
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ChangePasswordAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
 
 
         ////Helper
-        //private async Task<string> GeneratePasswordResetTokenAsync(USER user)
-        //{
-        //    var forgotePasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-        //    return forgotePasswordToken;
-        //}
+        private async Task<string> GeneratePasswordResetTokenAsync(USER user)
+        {
+            var forgotePasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            return forgotePasswordToken;
+        }
     }
 }
