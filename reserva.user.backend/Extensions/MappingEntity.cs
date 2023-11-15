@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using reserva.user.backend.DTO.HelperModels.Jwt;
+using reserva.user.backend.DTO.RequestModels;
 using reserva.user.backend.DTO.RequestModels.Auth;
 using reserva.user.backend.DTO.ResponseModels.Inner;
 using reserva.user.backend.Models;
@@ -15,6 +16,7 @@ namespace reserva.user.backend.Extensions
             CreateMap<STADIUM_TYPE, StadiumTypeVM>().ReverseMap();
             CreateMap<COMPANY, CompanyVM>().ReverseMap();
             CreateMap<COMPANY_BRANCH, CompanyBranch>().ReverseMap();
+            CreateMap<STADIUM, StadiumDto>().ReverseMap();
 
             CreateMap<USER, RegisterDto>().ReverseMap();
             CreateMap<USER, JwtCustomClaims>()
