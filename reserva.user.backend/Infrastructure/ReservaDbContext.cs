@@ -36,7 +36,7 @@ namespace reserva.user.backend.Infrastructure
         public DbSet<USER> user { get; set; }
         public DbSet<USER_ROLE> user_role { get; set; }
         public DbSet<CLIENT> client { get; set; }
-        public DbSet<COMPANT_EMPLOYEE> company_employee { get; set; }
+        public DbSet<COMPANY_EMPLOYEE> company_employee { get; set; }
         public DbSet<COMPANY> company { get; set; }
         public DbSet<COMPANY_BRANCH> company_branch { get; set; }
         public DbSet<RESERVE> reserve { get; set; }
