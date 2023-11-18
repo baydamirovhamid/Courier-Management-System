@@ -31,6 +31,7 @@ builder.Services.AddTransient<ICmdService, CmdService>();
 builder.Services.AddTransient<IJwtHandler, JwtHandler>();
 builder.Services.AddTransient<ILookupService, LookupService>();
 builder.Services.AddTransient<IStadiumService, StadiumService>();
+builder.Services.AddTransient<ITimeTypeService, TimeTypeService>();
 builder.Services.AddTransient<IValidationCommon, ValidationCommon>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
