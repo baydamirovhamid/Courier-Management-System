@@ -31,7 +31,11 @@ builder.Services.AddTransient<ICmdService, CmdService>();
 builder.Services.AddTransient<IJwtHandler, JwtHandler>();
 builder.Services.AddTransient<ILookupService, LookupService>();
 builder.Services.AddTransient<IStadiumService, StadiumService>();
+<<<<<<< HEAD
 builder.Services.AddTransient<IStadiumFulliedService, StadiumFulliedService>();
+=======
+builder.Services.AddTransient<IReserveService,ReserveService>();
+>>>>>>> c2a53f674fa15cf088409d3e38a4fed0966e4a60
 builder.Services.AddTransient<IValidationCommon, ValidationCommon>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IAuthService, AuthService>();

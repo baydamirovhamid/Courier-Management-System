@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using reserva.user.backend.Models;
 
 namespace reserva.user.backend.Infrastructure.Repository
 {
@@ -74,6 +75,11 @@ namespace reserva.user.backend.Infrastructure.Repository
         public void Save()
         {
             _dbContext.SaveChanges();
+        }
+
+        public void Update(STADIUM reserve)
+        {
+            throw new NotImplementedException();
         }
     }
 }

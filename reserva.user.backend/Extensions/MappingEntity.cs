@@ -17,8 +17,12 @@ namespace reserva.user.backend.Extensions
             CreateMap<COMPANY, CompanyVM>().ReverseMap();
             CreateMap<COMPANY_BRANCH, CompanyBranch>().ReverseMap();
             CreateMap<STADIUM, StadiumDto>().ReverseMap();
+<<<<<<< HEAD
             CreateMap<STADIUM_FULLIED, StadiumFulliedDto>().ReverseMap();
 
+=======
+            CreateMap<RESERVE, ReserveDto>().ReverseMap();
+>>>>>>> c2a53f674fa15cf088409d3e38a4fed0966e4a60
 
             CreateMap<USER, RegisterDto>().ReverseMap();
             CreateMap<USER, JwtCustomClaims>()
