@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace reserva.user.backend.Models;
 
-public partial class COMPANT_EMPLOYEE
+public partial class COMPANY_EMPLOYEE
 {
     [Column("id"), Key]
     public int Id { get; set; }
