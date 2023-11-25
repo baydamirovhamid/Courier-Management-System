@@ -19,6 +19,9 @@ public partial class STADIUM_PRICE
     [Column("stadium_id")]
     public int? StadiumId { get; set; }
 
+    [Column("created_at")]
+    public DateTime? CreatedAt { get; set; }
+
     public virtual STADIUM? Stadium { get; set; }
 
     public virtual TIME_TYPE? TimeType { get; set; }
