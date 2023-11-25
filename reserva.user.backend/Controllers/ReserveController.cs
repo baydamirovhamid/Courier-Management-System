@@ -5,6 +5,7 @@ using reserva.user.backend.DTO.RequestModels;
 using reserva.user.backend.DTO.ResponseModels.Main;
 using reserva.user.backend.Services.Interface;
 using System.Diagnostics;
+using reserva.user.backend.Services.Implementation;
 
 namespace reserva.user.backend.Controllers
 {
@@ -113,6 +114,62 @@ namespace reserva.user.backend.Controllers
                     return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
                 }
             }
+
+
+        [HttpGet]
+        [Route("get-by-id")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            ResponseObject<ReserveVM> response = new ResponseObject<ReserveVM>();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response.Response = await _reserveService.GetByIdAsync(id);
+                if (response.Response == null)
+                {
+                    response.Status.Message = "Məlumat tapılmadı!";
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetById)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
         }
+
+        [HttpGet]
+        [Route("get-all")]
+        public async Task<IActionResult> GetAll(int page, int pageSize)
+        {
+            ResponseListTotal<ReserveVM> response = new ResponseListTotal<ReserveVM>();
+            response.Response = new ResponseTotal<ReserveVM>();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _reserveService.GetAll(response, page, pageSize);
+                if (response.Response.Data == null)
+                {
+                    response.Status.Message = "Məlumat tapılmadı!";
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetAll)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
+    }
  }
 
