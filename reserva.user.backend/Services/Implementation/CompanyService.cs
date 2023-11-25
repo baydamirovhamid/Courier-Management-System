@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.RequestModels;
+using reserva.user.backend.DTO.ResponseModels.Inner;
 using reserva.user.backend.DTO.ResponseModels.Main;
 using reserva.user.backend.Infrastructure.Repository;
 using reserva.user.backend.Models;
@@ -95,6 +96,22 @@ namespace reserva.user.backend.Services.Implementation
             return response;
         }
 
+
+        public async Task<CompanyVM> GetByIdAsync(int id)
+        {
+            var db_model = await _companies.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<CompanyVM>(db_model);
+        }
+
+        public async Task<ResponseListTotal<CompanyVM>> GetAll(ResponseListTotal<CompanyVM> response, int page, int pageSize)
+        {
+            
+            var db_data = await _companies.AllQuery.OrderByDescending(x=>x.CreatedAt).ToListAsync();
+            response.Response.Total = db_data.Count;
+            db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            response.Response.Data = _mapper.Map<List<CompanyVM>>(db_data);
+            return response;
+        }
 
 
         //public IQueryable<BUILDING> GetAll(int SpId)
