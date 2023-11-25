@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using reserva.user.backend.DTO.HelperModels;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.RequestModels;
+using reserva.user.backend.DTO.ResponseModels.Inner;
 using reserva.user.backend.DTO.ResponseModels.Main;
 using reserva.user.backend.Infrastructure.Repository;
 using reserva.user.backend.Models;
@@ -36,7 +38,7 @@ namespace reserva.user.backend.Services.Implementation
             try
             {
                 var stadiumPrice = _mapper.Map<STADIUM_PRICE>(model);
-                stadiumPrice.CreatedAt = DateTime.Now;
+               // stadiumPrice.CreatedAt = DateTime.Now;
                 _stadiumPrice.Insert(stadiumPrice);
                 await _stadiumPrice.SaveAsync();
                 response.Status.Message = "Uğurla əlavə olundu!";
@@ -61,7 +63,7 @@ namespace reserva.user.backend.Services.Implementation
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 stadiumPrice.Id = id;
-                stadiumPrice.CreatedAt = stadiumPriceDb.CreatedAt;
+           //     stadiumPrice.CreatedAt = stadiumPriceDb.CreatedAt;
 
                 _stadiumPrice.Update(stadiumPrice);
                 await _stadiumPrice.SaveAsync();
@@ -93,6 +95,19 @@ namespace reserva.user.backend.Services.Implementation
             }
             return response;
         }
+        public async Task<StadiumPriceVM> GetByIdAsync(int id)
+        {
+            var db_model = await _stadiumPrice.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<StadiumPriceVM>(db_model);
+        }
+        public async Task<ResponseListTotal<StadiumPriceVM>> GetAll(ResponseListTotal<StadiumPriceVM> response, int page, int pageSize)
+        {
 
+            var db_data = await _stadiumPrice.AllQuery.ToListAsync();
+            response.Response.Total = db_data.Count;
+            db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            response.Response.Data = _mapper.Map<List<StadiumPriceVM>>(db_data);
+            return response;
+        }
     }
 }
