@@ -29,10 +29,10 @@ public partial class RESERVE
     [Column("created_by")]  
     public string? CreatedBy { get; set; }
 
-    [Column("update_at")]  
+    [Column("updated_at")]  
     public DateTime? UpdatedAt { get; set; }
 
-    [Column("update_by")]  
+    [Column("updated_by")]  
     public string? UpdatedBy { get; set; }
 
     [Column("is_deleted")]  

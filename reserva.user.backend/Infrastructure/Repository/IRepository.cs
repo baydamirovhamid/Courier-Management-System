@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
+using reserva.user.backend.Models;
 using System.Linq.Expressions;
 
 namespace reserva.user.backend.Infrastructure.Repository
@@ -19,5 +20,6 @@ namespace reserva.user.backend.Infrastructure.Repository
         //IDbContextTransaction UseTransaction(IDbContextTransaction transaction);
         void CommitTransaction(IDbContextTransaction transaction);
         void RollBackTransaction(IDbContextTransaction transaction);
+        void Update(STADIUM reserve);
     }
 }
