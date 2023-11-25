@@ -10,5 +10,7 @@ namespace reserva.user.backend.Services.Interface
         Task<ResponseSimple> CreateAsync(ResponseSimple response, StadiumDto model);
         Task<ResponseSimple> UpdateAsync(ResponseSimple response, StadiumDto model, int id);
         Task<ResponseSimple> DeleteAsync(ResponseSimple response, int id);
+        Task<StadiumVM> GetByIdAsync(int id);
+        Task<ResponseListTotal<StadiumVM>> GetAll(ResponseListTotal<StadiumVM> response, int page, int pageSize);
     }
 }

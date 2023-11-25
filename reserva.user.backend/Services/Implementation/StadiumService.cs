@@ -95,12 +95,21 @@ namespace reserva.user.backend.Services.Implementation
             return response;
         }
 
+        public async Task<StadiumVM> GetByIdAsync(int id)
+        {
+            var db_model = await _stadiums.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<StadiumVM>(db_model);
+        }
 
-
-        //public IQueryable<BUILDING> GetAll(int SpId)
-        //{
-        //    return _buildings.AllQuery.Where(x => x.SpId == SpId && x.IsDelete != true).OrderBy(x => x.Name);
-        //}
+        public async Task<ResponseListTotal<StadiumVM>> GetAll(ResponseListTotal<StadiumVM> response, int page, int pageSize)
+        {
+            
+            var db_data = await _stadiums.AllQuery.OrderByDescending(x=>x.CreatedAt).ToListAsync();
+            response.Response.Total = db_data.Count;
+            db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            response.Response.Data = _mapper.Map<List<StadiumVM>>(db_data);
+            return response;
+        }
 
         //public async Task<ResponseObject<BUILDING>> GetByIdAsync(ResponseObject<BUILDING> response, int id)
         //{
