@@ -9,36 +9,36 @@ using reserva.user.backend.Services.Interface;
 
 namespace reserva.user.backend.Services.Implementation
 {
-    public class StadiumService : IStadiumService
+    public class CompanyService : ICompanyService
     {
-        private readonly IRepository<STADIUM> _stadiums;
+        private readonly IRepository<COMPANY> _companies;
         private readonly ILoggerManager _logger;
         private readonly IConfiguration _configuration;
         private readonly ISqlService _sqlService;
         private readonly IMapper _mapper;
 
-        public StadiumService(
-            IRepository<STADIUM> stadiums,
+        public CompanyService(
+            IRepository<COMPANY> companies,
             ILoggerManager logger,
             IConfiguration configuration,
             ISqlService sqlService,
             IMapper mapper)
         {
-            _stadiums = stadiums;
+            _companies = companies;
             _logger = logger;
             _configuration = configuration;
             _sqlService = sqlService;
             _mapper = mapper;
         }
 
-        public async Task<ResponseSimple> CreateAsync(ResponseSimple response, StadiumDto model)
+        public async Task<ResponseSimple> CreateAsync(ResponseSimple response, CompanyDto model)
         {
             try
             {
-                var stadium = _mapper.Map<STADIUM>(model);
-                stadium.CreatedAt = DateTime.Now;
-                _stadiums.Insert(stadium);
-                await _stadiums.SaveAsync();
+                var company = _mapper.Map<COMPANY>(model);
+                company.CreatedAt = DateTime.Now;
+                _companies.Insert(company);
+                await _companies.SaveAsync();
                 response.Status.Message = "Uğurla əlavə olundu!";
             }
             catch (Exception e)
@@ -50,22 +50,22 @@ namespace reserva.user.backend.Services.Implementation
             return response;
         }
 
-        public async Task<ResponseSimple> UpdateAsync(ResponseSimple response, StadiumDto model, int id)
+        public async Task<ResponseSimple> UpdateAsync(ResponseSimple response, CompanyDto model, int id)
         {
             try
             {
-                var stadium = _mapper.Map<STADIUM>(model);
+                var company = _mapper.Map<COMPANY>(model);
 
-                var stadiumDb = await _stadiums.AllQuery
+                var companyDb = await _companies.AllQuery
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
 
-                stadium.Id = id;
-                stadium.UpdatedAt = DateTime.Now;
-                stadium.CreatedAt = stadiumDb.CreatedAt;
+                company.Id = id;
+                company.UpdatedAt = DateTime.Now;
+                company.CreatedAt = companyDb.CreatedAt;
 
-                _stadiums.Update(stadium);
-                await _stadiums.SaveAsync();
+                _companies.Update(company);
+                await _companies.SaveAsync();
                 response.Status.Message = "Uğurla yeniləndi!";
             }
             catch (Exception e)
@@ -81,9 +81,9 @@ namespace reserva.user.backend.Services.Implementation
         {
             try
             {
-                var stadium = await _stadiums.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
-                _stadiums.Remove(stadium);
-                await _stadiums.SaveAsync();
+                var company = await _companies.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+                _companies.Remove(company);
+                await _companies.SaveAsync();
                 response.Status.Message = "Uğurla silindi!";
             }
             catch (Exception e)
@@ -95,21 +95,12 @@ namespace reserva.user.backend.Services.Implementation
             return response;
         }
 
-        public async Task<StadiumVM> GetByIdAsync(int id)
-        {
-            var db_model = await _stadiums.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
-            return _mapper.Map<StadiumVM>(db_model);
-        }
 
-        public async Task<ResponseListTotal<StadiumVM>> GetAll(ResponseListTotal<StadiumVM> response, int page, int pageSize)
-        {
-            
-            var db_data = await _stadiums.AllQuery.OrderByDescending(x=>x.CreatedAt).ToListAsync();
-            response.Response.Total = db_data.Count;
-            db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-            response.Response.Data = _mapper.Map<List<StadiumVM>>(db_data);
-            return response;
-        }
+
+        //public IQueryable<BUILDING> GetAll(int SpId)
+        //{
+        //    return _buildings.AllQuery.Where(x => x.SpId == SpId && x.IsDelete != true).OrderBy(x => x.Name);
+        //}
 
         //public async Task<ResponseObject<BUILDING>> GetByIdAsync(ResponseObject<BUILDING> response, int id)
         //{
