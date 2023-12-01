@@ -9,6 +9,7 @@ using reserva.user.backend.DTO.ResponseModels.Inner;
 using billkill.manager.backend.Services.Implementation;
 using reserva.user.backend.DTO.RequestModels;
 using reserva.user.backend.Services.Implementation;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace reserva.user.backend.Controllers
 {
@@ -115,5 +116,62 @@ namespace reserva.user.backend.Controllers
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
+
+        [HttpPut]
+        [Route("update-employee")]
+        public async Task<IActionResult> UpdateEmployeeAsync(int id, [FromBody] CompanyEmployeeDto model)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _employeeService.UpdateEmployeeAsync(response, model, id);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateEmployeeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "An error occurred in the system.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-employee-patch")]
+        public async Task<IActionResult> PartiallyUpdateProduct(int id, [FromBody] JsonPatchDocument<CompanyEmployeeDto> model)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _employeeService.PartiallyUpdateEmployeeAsync(response, id, model);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateEmployeeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "An error occurred in the system.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
     }
 }
+

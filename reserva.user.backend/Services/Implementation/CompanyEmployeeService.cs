@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.RequestModels;
@@ -92,6 +93,67 @@ namespace reserva.user.backend.Services.Implementation
                 response.Status.ErrorCode = ErrorCodes.DB;
                 response.Status.Message = "Problem baş verdi!";
             }
+            return response;
+        }
+
+        public async Task<ResponseSimple> UpdateEmployeeAsync(ResponseSimple response, CompanyEmployeeDto model, int id)
+        {
+            try
+            {
+                var employee = _mapper.Map<COMPANY_EMPLOYEE>(model);
+                var existingEmployee = await _employees.AllQuery
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+
+                _employees.Update(employee);
+                await _employees.SaveAsync();
+                response.Status.ErrorCode = 0;
+                response.Status.Message = "Uğurla yeniləndi!";
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateEmployeeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+
+            return response;
+        }
+
+        public async Task<ResponseSimple> PartiallyUpdateEmployeeAsync(ResponseSimple response, int id, JsonPatchDocument<CompanyEmployeeDto> model)
+        {
+            try
+            {
+                var existingEmployee = await _employees.AllQuery
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (existingEmployee == null)
+                {
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    response.Status.Message = "Employee not found.";
+                    return response;
+                }
+
+                var employeeDto = _mapper.Map<CompanyEmployeeDto>(existingEmployee);
+
+                model.ApplyTo(employeeDto);
+
+                _mapper.Map(employeeDto, existingEmployee);
+                _employees.Update(existingEmployee);
+                await _employees.SaveAsync();
+                response.Status.ErrorCode = 0;
+                response.Status.Message = "Uğurla yeniləndi!";
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateEmployeeAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+
             return response;
         }
     }
