@@ -117,58 +117,57 @@ namespace reserva.user.backend.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("update-employee")]
-        public async Task<IActionResult> UpdateEmployeeAsync(int id, [FromBody] CompanyEmployeeDto model)
+        [HttpGet]
+        [Route("get-by-id")]
+        public async Task<IActionResult> GetById(int id)
         {
-            ResponseSimple response = new ResponseSimple();
+            ResponseObject<CompanyEmployeeVM> response = new ResponseObject<CompanyEmployeeVM>();
             response.Status = new StatusModel();
             response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
             try
             {
-                response = await _employeeService.UpdateEmployeeAsync(response, model, id);
-                if (response.Status.ErrorCode != 0)
+                response.Response = await _employeeService.GetByIdAsync(id);
+                if (response.Response == null)
                 {
-                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                    response.Status.Message = "Məlumat tapılmadı!";
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
                 }
-                else
-                {
-                    return Ok(response);
-                }
+                return Ok(response);
             }
             catch (Exception e)
             {
-                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateEmployeeAsync)}: " + $"{e}");
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetById)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "An error occurred in the system.";
+                response.Status.Message = "Sistemdə xəta baş verdi.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
 
-        [HttpPatch]
-        [Route("update-employee-patch")]
-        public async Task<IActionResult> PartiallyUpdateProduct(int id, [FromBody] JsonPatchDocument<CompanyEmployeeDto> model)
+        [HttpGet]
+        [Route("get-all")]
+        public async Task<IActionResult> GetAll(int page, int pageSize)
         {
-            ResponseSimple response = new ResponseSimple();
+            ResponseListTotal<CompanyEmployeeVM> response = new ResponseListTotal<CompanyEmployeeVM>();
+            response.Response = new ResponseTotal<CompanyEmployeeVM>();
             response.Status = new StatusModel();
             response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
             try
             {
-                response = await _employeeService.PartiallyUpdateEmployeeAsync(response, id, model);
-                if (response.Status.ErrorCode != 0)
+                response = await _employeeService.GetAll(response, page, pageSize);
+                if (response.Response.Data == null)
                 {
-                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                    response.Status.Message = "Məlumat tapılmadı!";
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
                 }
-                else
-                {
-                    return Ok(response);
-                }
+                return Ok(response);
             }
             catch (Exception e)
             {
-                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateEmployeeAsync)}: " + $"{e}");
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetAll)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "An error occurred in the system.";
+                response.Status.Message = "Sistemdə xəta baş verdi.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
