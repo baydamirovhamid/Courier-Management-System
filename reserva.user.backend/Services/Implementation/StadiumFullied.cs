@@ -97,33 +97,21 @@ namespace reserva.user.backend.Services.Implementation
 
 
 
-        //public IQueryable<BUILDING> GetAll(int SpId)
-        //{
-        //    return _buildings.AllQuery.Where(x => x.SpId == SpId && x.IsDelete != true).OrderBy(x => x.Name);
-        //}
+        public async Task<StadiumFulliedVM> GetByIdAsync(int id)
+        {
+            var db_model = await _stadiumfullieds.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<StadiumFulliedVM>(db_model);
+        }
 
-        //public async Task<ResponseObject<BUILDING>> GetByIdAsync(ResponseObject<BUILDING> response, int id)
-        //{
-        //    try
-        //    {
-        //        var building = await _buildings.AllQuery.FirstOrDefaultAsync(x => x.Id == id && x.IsDelete != true);
-        //        if (building == null)
-        //        {
-        //            response.Status.Message = "Tapılmadı!";
-        //            response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
-        //            return response;
-        //        }
-        //        response.Response = building;
-        //        return response;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetByIdAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+        public async Task<ResponseListTotal<StadiumFulliedVM>> GetAll(ResponseListTotal<StadiumFulliedVM> response, int page, int pageSize)
+        {
+
+            var db_data = await _stadiumfullieds.AllQuery.OrderByDescending(x => x.CreatedAt).ToListAsync();
+            response.Response.Total = db_data.Count;
+            db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            response.Response.Data = _mapper.Map<List<StadiumFulliedVM>>(db_data);
+            return response;
+        }
 
 
         //public ResponseTotal<BUILDING> GetBuildings(int SpId, BuildingsFilterVM filterVM)

@@ -31,6 +31,8 @@ builder.Services.AddTransient<ICmdService, CmdService>();
 builder.Services.AddTransient<IJwtHandler, JwtHandler>();
 builder.Services.AddTransient<ILookupService, LookupService>();
 builder.Services.AddTransient<IStadiumService, StadiumService>();
+builder.Services.AddTransient<IStadiumFulliedService, StadiumFulliedService>();
+builder.Services.AddTransient<IReserveService,ReserveService>();
 builder.Services.AddTransient<ITimeTypeService, TimeTypeService>();
 builder.Services.AddTransient<IStadiumFulliedService, StadiumFulliedService>();
 builder.Services.AddTransient<IReserveService,ReserveService>();
