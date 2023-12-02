@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.RequestModels;
@@ -114,72 +115,64 @@ namespace reserva.user.backend.Services.Implementation
         }
 
 
-        //public IQueryable<BUILDING> GetAll(int SpId)
-        //{
-        //    return _buildings.AllQuery.Where(x => x.SpId == SpId && x.IsDelete != true).OrderBy(x => x.Name);
-        //}
+        public async Task<ResponseSimple> UpdateCompanyAsync(ResponseSimple response, CompanyDto model, int id)
+        {
+            try
+            {
+                var company = _mapper.Map<COMPANY>(model);
+                var existingCompany = await _companies.AllQuery
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+                company.Id = id;
+                _companies.Update(company);
+                await _companies.SaveAsync();
+                response.Status.ErrorCode = 0;
+                response.Status.Message = "Uğurla yeniləndi!";
+            }
 
-        //public async Task<ResponseObject<BUILDING>> GetByIdAsync(ResponseObject<BUILDING> response, int id)
-        //{
-        //    try
-        //    {
-        //        var building = await _buildings.AllQuery.FirstOrDefaultAsync(x => x.Id == id && x.IsDelete != true);
-        //        if (building == null)
-        //        {
-        //            response.Status.Message = "Tapılmadı!";
-        //            response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
-        //            return response;
-        //        }
-        //        response.Response = building;
-        //        return response;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetByIdAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateCompanyAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+
+            return response;
+        }
 
 
-        //public ResponseTotal<BUILDING> GetBuildings(int SpId, BuildingsFilterVM filterVM)
-        //{
-        //    int recordsToSkip = (filterVM.Page - 1) * filterVM.PageSize;
+        public async Task<ResponseSimple> PartiallyUpdateCompanyAsync(ResponseSimple response, int id, JsonPatchDocument<CompanyDto> model)
+        {
+            try
+            {
+                var existingCompany = await _companies.AllQuery
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-        //    var query = _buildings.AllQuery
-        //        .Where(
-        //                x =>
-        //                x.IsDelete != true &&
-        //                x.SpId == SpId &&
-        //                (string.IsNullOrEmpty(filterVM.Name) ? true : x.Name.ToLower().Contains(filterVM.Name.ToLower())) &&
-        //                (string.IsNullOrEmpty(filterVM.Address) ? true : x.Address.ToLower().Contains(filterVM.Address.ToLower()))
-        //        )
-        //        .OrderByDescending(x => x.UpdatedAt != null ? x.UpdatedAt : x.CreatedAt);
+                if (existingCompany == null)
+                {
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    response.Status.Message = "Company not found.";
+                    return response;
+                }
 
-        //    var response = new ResponseTotal<BUILDING>();
-        //    response.Total = query.Count();
-        //    response.Data = query
-        //        .Skip(recordsToSkip)
-        //        .Take(filterVM.PageSize)
-        //        .ToList();
+                var companyDto = _mapper.Map<CompanyDto>(existingCompany);
 
-        //    return response;
-        //}
+                model.ApplyTo(companyDto);
 
-        //public ResponseTotal<BuildingExelVM> GetBuildingsExel(int SpId)
-        //{
-        //    var response = new ResponseTotal<BuildingExelVM>();
-        //    response.Data = _buildings.AllQuery.Where(
-        //        x =>
-        //        x.IsDelete != true &&
-        //        x.SpId == SpId)
-        //        .OrderBy(x => x.Name)
-        //        .Select(x=>new BuildingExelVM { Name=x.Name,Address=x.Address})
-        //        .ToList();
+                _mapper.Map(companyDto, existingCompany);
+                _companies.Update(existingCompany);
+                await _companies.SaveAsync();
+                response.Status.ErrorCode = 0;
+                response.Status.Message = "Uğurla yeniləndi!";
+            }
 
-        //    return response;
-        //}
-
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateCompanyAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
     }
 }
