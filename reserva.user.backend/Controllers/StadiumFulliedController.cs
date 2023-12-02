@@ -9,6 +9,7 @@ using reserva.user.backend.DTO.ResponseModels.Inner;
 using billkill.manager.backend.Services.Implementation;
 using reserva.user.backend.DTO.RequestModels;
 using reserva.user.backend.Services.Implementation;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace reserva.user.backend.Controllers
 {
@@ -166,6 +167,61 @@ namespace reserva.user.backend.Controllers
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetAll)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
                 response.Status.Message = "Sistemdə xəta baş verdi.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
+        [HttpPut]
+        [Route("update-stadiumfullied")]
+        public async Task<IActionResult> UpdateStadiumFulliedAsync(int id, [FromBody] StadiumFulliedDto model)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _stadiumfulliedService.UpdateStadiumFulliedAsync(response, model, id);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateStadiumFulliedAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "An error occurred in the system.";
+                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-stadiumfullied-patch")]
+        public async Task<IActionResult> PartiallyUpdateProduct(int id, [FromBody] JsonPatchDocument<StadiumFulliedDto> model)
+        {
+            ResponseSimple response = new ResponseSimple();
+            response.Status = new StatusModel();
+            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            try
+            {
+                response = await _stadiumfulliedService.PartiallyUpdateStadiumFulliedAsync(response, id, model);
+                if (response.Status.ErrorCode != 0)
+                {
+                    return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateStadiumFulliedAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.SYSTEM;
+                response.Status.Message = "An error occurred in the system.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }

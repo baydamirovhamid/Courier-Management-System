@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.RequestModels;
@@ -114,6 +115,71 @@ namespace reserva.user.backend.Services.Implementation
         }
 
 
+        public async Task<ResponseSimple> UpdateStadiumFulliedAsync(ResponseSimple response, StadiumFulliedDto model, int id)
+        {
+            try
+            {
+                var stadiumfullied = _mapper.Map<STADIUM_FULLIED>(model);
+                var existingStadiumFullied = await _stadiumfullieds.AllQuery
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+                stadiumfullied.Id = id;
+                _stadiumfullieds.Update(stadiumfullied);
+                await _stadiumfullieds.SaveAsync();
+                response.Status.ErrorCode = 0;
+                response.Status.Message = "Uğurla yeniləndi!";
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateStadiumFulliedAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+
+            return response;
+        }
+
+
+        public async Task<ResponseSimple> PartiallyUpdateStadiumFulliedAsync(ResponseSimple response, int id, JsonPatchDocument<StadiumFulliedDto> model)
+        {
+            try
+            {
+                var existingStadiumFullied = await _stadiumfullieds.AllQuery
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (existingStadiumFullied == null)
+                {
+                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
+                    response.Status.Message = "Employee not found.";
+                    return response;
+                }
+
+                var StadiumFulliedDto = _mapper.Map<StadiumFulliedDto>(existingStadiumFullied);
+
+                model.ApplyTo(StadiumFulliedDto);
+
+                _mapper.Map(StadiumFulliedDto, existingStadiumFullied);
+                _stadiumfullieds.Update(existingStadiumFullied);
+                await _stadiumfullieds.SaveAsync();
+                response.Status.ErrorCode = 0;
+                response.Status.Message = "Uğurla yeniləndi!";
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateStadiumFulliedAsync)}: " + $"{e}");
+                response.Status.ErrorCode = ErrorCodes.DB;
+                response.Status.Message = "Problem baş verdi!";
+            }
+            return response;
+        }
+
+    }
+}
+
+
+
         //public ResponseTotal<BUILDING> GetBuildings(int SpId, BuildingsFilterVM filterVM)
         //{
         //    int recordsToSkip = (filterVM.Page - 1) * filterVM.PageSize;
@@ -152,5 +218,5 @@ namespace reserva.user.backend.Services.Implementation
         //    return response;
         //}
 
-    }
-}
+    
+
