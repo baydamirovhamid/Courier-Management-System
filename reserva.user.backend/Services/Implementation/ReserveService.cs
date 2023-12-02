@@ -94,5 +94,20 @@ namespace reserva.user.backend.Services.Implementation
             }
             return response;
         }
+        public async Task<ReserveVM> GetByIdAsync(int id)
+        {
+            var db_model = await _reserves.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<ReserveVM>(db_model);
+        }
+
+        public async Task<ResponseListTotal<ReserveVM>> GetAll(ResponseListTotal<ReserveVM> response, int page, int pageSize)
+        {
+
+            var db_data = await _reserves.AllQuery.OrderByDescending(x => x.CreatedAt).ToListAsync();
+            response.Response.Total = db_data.Count;
+            db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            response.Response.Data = _mapper.Map<List<ReserveVM>>(db_data);
+            return response;
+        }
     }
 }
