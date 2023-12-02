@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.RequestModels;
+using reserva.user.backend.DTO.ResponseModels.Inner;
 using reserva.user.backend.DTO.ResponseModels.Main;
 using reserva.user.backend.Infrastructure.Repository;
 using reserva.user.backend.Models;
@@ -88,6 +89,20 @@ namespace reserva.user.backend.Services.Implementation
                 response.Status.ErrorCode = ErrorCodes.DB;
                 response.Status.Message = "Problem baş verdi!";
             }
+            return response;
+        }
+        public async Task<TimeTypeVM> GetByIdAsync(int id)
+        {
+            var db_model = await _time_type.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<TimeTypeVM>(db_model);
+        }
+        public async Task<ResponseListTotal<TimeTypeVM>> GetAll(ResponseListTotal<TimeTypeVM> response, int page, int pageSize)
+        {
+
+            var db_data = await _time_type.AllQuery.OrderByDescending(x => x).ToListAsync();
+            response.Response.Total = db_data.Count;
+            db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            response.Response.Data = _mapper.Map<List<TimeTypeVM>>(db_data);
             return response;
         }
     }
