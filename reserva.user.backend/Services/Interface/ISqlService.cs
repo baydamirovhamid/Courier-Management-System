@@ -2,5 +2,6 @@
 {
     public interface ISqlService
     {
+        string GetStadiums(bool isCount);
     }
 }
