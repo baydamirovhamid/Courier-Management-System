@@ -9,6 +9,7 @@
         private readonly int _mail_port;
         private readonly string _url;
         private readonly string _appFilePath = string.Empty;
+        private readonly string _connectionString = string.Empty;
 
         public AppConfiguration()
         {
@@ -17,6 +18,7 @@
             configurationBuilder.AddJsonFile(path, false);
             var root = configurationBuilder.Build();
 
+            _connectionString = root.GetSection("ConnectionStrings").GetSection("DefaultConnection").Value;
             _jwtSecret = root.GetSection("ApplicationSettings").GetSection("jwt_secret").Value;
             _appFilePath = root.GetSection("Template").GetSection("appFile").Value;
             _mail_username = root.GetSection("Mail").GetSection("Username").Value;
@@ -32,5 +34,6 @@
         public string MailHost => _mail_host;
         public string MailUrl => _url;
         public int MailPort => _mail_port;
+        public string ConnectionString => _connectionString;
     }
 }

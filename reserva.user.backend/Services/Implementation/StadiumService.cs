@@ -1,16 +1,24 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using Org.BouncyCastle.Utilities;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.RequestModels;
 using reserva.user.backend.DTO.ResponseModels.Main;
+using reserva.user.backend.Extensions;
 using reserva.user.backend.Infrastructure.Repository;
 using reserva.user.backend.Models;
 using reserva.user.backend.Services.Interface;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Data;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace reserva.user.backend.Services.Implementation
 {
     public class StadiumService : IStadiumService
     {
+        AppConfiguration config = new AppConfiguration();
         private readonly IRepository<STADIUM> _stadiums;
         private readonly ILoggerManager _logger;
         private readonly IConfiguration _configuration;
@@ -111,67 +119,53 @@ namespace reserva.user.backend.Services.Implementation
             return response;
         }
 
-        //public async Task<ResponseObject<BUILDING>> GetByIdAsync(ResponseObject<BUILDING> response, int id)
-        //{
-        //    try
-        //    {
-        //        var building = await _buildings.AllQuery.FirstOrDefaultAsync(x => x.Id == id && x.IsDelete != true);
-        //        if (building == null)
-        //        {
-        //            response.Status.Message = "Tapılmadı!";
-        //            response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
-        //            return response;
-        //        }
-        //        response.Response = building;
-        //        return response;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetByIdAsync)}: " + $"{e}");
-        //        response.Status.ErrorCode = ErrorCodes.DB;
-        //        response.Status.Message = "Problem baş verdi!";
-        //    }
-        //    return response;
-        //}
+        public List<StadiumVMOrm> GetStadiumsOrm(int skip, int limit, ref decimal totalCount)
+        {
+            List<StadiumVMOrm> data = new List<StadiumVMOrm>();
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(config.ConnectionString))
+            {
+                connection.Open();
+               
+                string query =  _sqlService.GetStadiums(false);
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            StadiumVMOrm ss = new StadiumVMOrm()
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("name")),
+                                BranchName = reader.GetString(reader.GetOrdinal("branch_name")),
+                                Code = reader.GetString(reader.GetOrdinal("code")),
+                                Type = reader.GetString(reader.GetOrdinal("type")),
+                                MinPrice = reader.GetInt32(reader.GetOrdinal("min_price"))
+                            };
+                            data.Add(ss);
 
 
-        //public ResponseTotal<BUILDING> GetBuildings(int SpId, BuildingsFilterVM filterVM)
-        //{
-        //    int recordsToSkip = (filterVM.Page - 1) * filterVM.PageSize;
+                        }
+                    }
+                }
+                query = _sqlService.GetStadiums(true);
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
 
-        //    var query = _buildings.AllQuery
-        //        .Where(
-        //                x =>
-        //                x.IsDelete != true &&
-        //                x.SpId == SpId &&
-        //                (string.IsNullOrEmpty(filterVM.Name) ? true : x.Name.ToLower().Contains(filterVM.Name.ToLower())) &&
-        //                (string.IsNullOrEmpty(filterVM.Address) ? true : x.Address.ToLower().Contains(filterVM.Address.ToLower()))
-        //        )
-        //        .OrderByDescending(x => x.UpdatedAt != null ? x.UpdatedAt : x.CreatedAt);
+                            totalCount = reader.GetInt32(reader.GetOrdinal("totalCount"));
 
-        //    var response = new ResponseTotal<BUILDING>();
-        //    response.Total = query.Count();
-        //    response.Data = query
-        //        .Skip(recordsToSkip)
-        //        .Take(filterVM.PageSize)
-        //        .ToList();
+                        }
+                    }
 
-        //    return response;
-        //}
-
-        //public ResponseTotal<BuildingExelVM> GetBuildingsExel(int SpId)
-        //{
-        //    var response = new ResponseTotal<BuildingExelVM>();
-        //    response.Data = _buildings.AllQuery.Where(
-        //        x =>
-        //        x.IsDelete != true &&
-        //        x.SpId == SpId)
-        //        .OrderBy(x => x.Name)
-        //        .Select(x=>new BuildingExelVM { Name=x.Name,Address=x.Address})
-        //        .ToList();
-
-        //    return response;
-        //}
+                }
+                return data;
+            }
+        }
 
     }
 }
