@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NLog.Extensions.Logging;
 using Npgsql.Internal.TypeHandlers.NetworkHandlers;
-using billkill.payment.service.Models;
-using billkill.manager.backend.Services.Implementation;
+using reserva.user.backend.Models;
+using reserva.user.backend.Services.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 

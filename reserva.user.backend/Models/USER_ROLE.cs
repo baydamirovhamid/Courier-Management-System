@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace billkill.payment.service.Models
+namespace reserva.user.backend.Models
 {
     public class USER_ROLE: IdentityRole<int>
     {

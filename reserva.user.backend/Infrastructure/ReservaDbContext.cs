@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using billkill.payment.service.Models;
+using reserva.payment.service.Models;
 
 namespace reserva.user.backend.Infrastructure
 {

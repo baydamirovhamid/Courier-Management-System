@@ -11,7 +11,7 @@ using reserva.user.backend.DTO.RequestModels.Auth;
 using reserva.user.backend.DTO.HelperModels.Const;
 using reserva.user.backend.DTO.HelperModels.Jwt;
 
-namespace billkill.manager.backend.Services.Implementation
+namespace reserva.user.backend.Services.Implementation
 {
     public class AuthService : IAuthService
     {
