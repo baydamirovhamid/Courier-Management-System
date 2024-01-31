@@ -10,66 +10,66 @@ using courier.management.system.Services.Interface;
 
 namespace courier.management.system.Services.Implementation
 {
-    public class TimeTypeService : ITimeTypeService
+    public class PackageService : IPackageService
     {
-        private readonly IRepository<TIME_TYPE> _time_type;
+        private readonly IRepository<PACKAGE> _packages;
         private readonly ILoggerManager _logger;
         private readonly IConfiguration _configuration;
-        private readonly ISqlService _sqlService;
+       
         private readonly IMapper _mapper;
 
-        public TimeTypeService(
-            IRepository<TIME_TYPE> time_types,
+        public PackageService(
+            IRepository<PACKAGE> packages,
             ILoggerManager logger,
             IConfiguration configuration,
-            ISqlService sqlService,
+            
             IMapper mapper)
         {
-            _time_type = time_types;
+            _packages = packages;
             _logger = logger;
             _configuration = configuration;
-            _sqlService = sqlService;
+           
             _mapper = mapper;
         }
 
-        public async Task<ResponseSimple> CreateAsync(ResponseSimple response, TimeTypeDto model)
+        public async Task<ResponseSimple> CreateAsync(ResponseSimple response, PackageDto model)
         {
             try
             {
-                var time_type = _mapper.Map<TIME_TYPE>(model);
-                _time_type.Insert(time_type);
-                await _time_type.SaveAsync();
-                response.Status.Message = "Uğurla əlavə olundu!";
+                var package = _mapper.Map<PACKAGE>(model);
+                _packages.Insert(package);
+                await _packages.SaveAsync();
+                response.Status.Message = "Successfully added!";
             }
             catch (Exception e)
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(CreateAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.DB;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "Invalid!";
             }
             return response;
         }
 
-        public async Task<ResponseSimple> UpdateAsync(ResponseSimple response, TimeTypeDto model, int id)
+        public async Task<ResponseSimple> UpdateAsync(ResponseSimple response, PackageDto model, int id)
         {
             try
             {
-                var time_type = _mapper.Map<TIME_TYPE>(model);
+                var package = _mapper.Map<PACKAGE>(model);
 
-                var timetypeDb = await _time_type.AllQuery
+                var packageDb = await _packages.AllQuery
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
 
-                time_type.Id = id;
-                _time_type.Update(time_type);
-                await _time_type.SaveAsync();
-                response.Status.Message = "Uğurla yeniləndi!";
+                package.Id = id;
+                _packages.Update(package);
+                await _packages.SaveAsync();
+                response.Status.Message = "Successfully added!";
             }
             catch (Exception e)
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.DB;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "Invalid!";
             }
             return response;
         }
@@ -78,31 +78,31 @@ namespace courier.management.system.Services.Implementation
         {
             try
             {
-                var time_type = await _time_type.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
-                _time_type.Remove(time_type);
-                await _time_type.SaveAsync();
-                response.Status.Message = "Uğurla silindi!";
+                var package = await _packages.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+                _packages.Remove(package);
+                await _packages.SaveAsync();
+                response.Status.Message = "Successfully deleted!";
             }
             catch (Exception e)
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(DeleteAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.DB;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "Invalid!";
             }
             return response;
         }
-        public async Task<TimeTypeVM> GetByIdAsync(int id)
+        public async Task<PackageVM> GetByIdAsync(int id)
         {
-            var db_model = await _time_type.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
-            return _mapper.Map<TimeTypeVM>(db_model);
+            var db_model = await _packages.AllQuery.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<PackageVM>(db_model);
         }
-        public async Task<ResponseListTotal<TimeTypeVM>> GetAll(ResponseListTotal<TimeTypeVM> response, int page, int pageSize)
+        public async Task<ResponseListTotal<PackageVM>> GetAll(ResponseListTotal<PackageVM> response, int page, int pageSize)
         {
 
-            var db_data = await _time_type.AllQuery.OrderByDescending(x => x).ToListAsync();
+            var db_data = await _packages.AllQuery.OrderByDescending(x => x).ToListAsync();
             response.Response.Total = db_data.Count;
             db_data = db_data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-            response.Response.Data = _mapper.Map<List<TimeTypeVM>>(db_data);
+            response.Response.Data = _mapper.Map<List<PackageVM>>(db_data);
             return response;
         }
     }

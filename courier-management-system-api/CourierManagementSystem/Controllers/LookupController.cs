@@ -20,105 +20,43 @@ namespace courier.management.system.Controllers
         }
 
         [HttpGet]
-        [Route("get-static-data")]
-        public async Task<IActionResult> GetStaticData(string key)
+        [Route("get-payment")]
+        public async Task<IActionResult> GetPayment()
         {
-            ResponseObject<StaticVM> response = new ResponseObject<StaticVM>();
+            ResponseList<PaymentVM> response = new ResponseList<PaymentVM>();
             response.Status = new StatusModel();
             response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
             try
             {
-                response = await _lookupService.GetStaticDataAsync(response, key);
+                response = await _lookupService.GetPaymentAsync(response);
                 return Ok(response);
             }
             catch (Exception e)
             {
 
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
 
         [HttpGet]
-        [Route("get-stadium-type")]
-        public async Task<IActionResult> GetStadiumTypeData()
+        [Route("get-package")]
+        public async Task<IActionResult> GetPackageData()
         {
-            ResponseList<StadiumTypeVM> response = new ResponseList<StadiumTypeVM>();
+            ResponseList<PackageVM> response = new ResponseList<PackageVM>();
             response.Status = new StatusModel();
             response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
             try
             {
-                response = await _lookupService.GetStadiumTypeAsync(response);
+                response = await _lookupService.GetPackageAsync(response);
                 return Ok(response);
             }
             catch (Exception e)
             {
 
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
-                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-            }
-        }
-        [HttpGet]
-        [Route("get-time-type")]
-        public async Task<IActionResult> GetTimeTypeData()
-        {
-            ResponseList<TimeTypeVM> response = new ResponseList<TimeTypeVM>();
-            response.Status = new StatusModel();
-            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-            try
-            {
-                response = await _lookupService.GetTimeTypeAsync(response);
-                return Ok(response);
-            }
-            catch (Exception e)
-            {
-
-                response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
-                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-            }
-        }
-
-        [HttpGet]
-        [Route("get-company")]
-        public async Task<IActionResult> GetCompany()
-        {
-            ResponseList<CompanyVM> response = new ResponseList<CompanyVM>();
-            response.Status = new StatusModel();
-            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-            try
-            {
-                response = await _lookupService.GetCompanyAsync(response);
-                return Ok(response);
-            }
-            catch (Exception e)
-            {
-
-                response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
-                return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
-            }
-        }
-
-        [HttpGet]
-        [Route("get-company-branch")]
-        public async Task<IActionResult> GetCompanyBranch()
-        {
-            ResponseList<CompanyBranch> response = new ResponseList<CompanyBranch>();
-            response.Status = new StatusModel();
-            response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-            try
-            {
-                response = await _lookupService.GetCompanyBranch(response);
-                return Ok(response);
-            }
-            catch (Exception e)
-            {
-
-                response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }

@@ -17,9 +17,8 @@ namespace courier.management.system.Infrastructure.Repository
         void Save();
         Task<IDbContextTransaction> BeginTransactionAsync();
         IDbContextTransaction BeginTransaction();
-        //IDbContextTransaction UseTransaction(IDbContextTransaction transaction);
         void CommitTransaction(IDbContextTransaction transaction);
         void RollBackTransaction(IDbContextTransaction transaction);
-        void Update(STADIUM reserve);
+        void Update(COURIER courier);
     }
 }

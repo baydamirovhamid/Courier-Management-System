@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace courier.management.system.Models;
 
-public partial class STADIUM
+public partial class COURIER
 {
      [Column("id"), Key]
      public int Id { get; set; }
@@ -13,25 +13,16 @@ public partial class STADIUM
      [Column("name")]
      public string? Name { get; set; }
 
-     [Column("code")]
-     public string? Code { get; set; }
+    [Column("surname")]
+    public string Surname { get; set; }
 
-     [Column("type_id")]
-     public int? TypeId { get; set; }
+    [Column("contact")]
+    public string Contact { get; set; }
 
-     [Column("branch_id")]
-     public int? BranchId { get; set; }
+    [Column("email")]
+    public string Email { get; set; }
 
-     [Column("has_recording")]
-     public bool? HasRecording { get; set; }
-
-     [Column("min_price")]
-     public int? MinPrice { get; set; }
-
-     [Column("max_price")]
-     public int? MaxPrice { get; set; }
-
-     [Column("created_at")]
+    [Column("created_at")]
      public DateTime? CreatedAt { get; set; }
 
      [Column("created_by")]
@@ -43,7 +34,5 @@ public partial class STADIUM
      [Column("updated_by")]
      public string? UpdatedBy { get; set; }
 
-     public virtual COMPANY_BRANCH? Branch { get; set; }
 
-   
 }

@@ -4,15 +4,14 @@ using courier.management.system.DTO.HelperModels.Const;
 using courier.management.system.DTO.ResponseModels.Inner;
 using courier.management.system.DTO.ResponseModels.Main;
 
-public partial class ReserveVM
+public partial class PaymentVM
 {
     public int Id { get; set; }
-    public int? ClientId { get; set; }
-    public int? StadiumId { get; set; }
-    public DateTime? Date { get; set; }
-    public int? TotalAmount { get; set; }
+    public int? Amount { get; set; }
+    public int? PaymentDate { get; set; }
+    public DateTime? CustomerId { get; set; }
+    public DateTime? PackageId { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public bool? IsDeleted { get; set; }
-
+    
 }

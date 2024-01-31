@@ -7,10 +7,10 @@ namespace courier.management.system.Infrastructure.Repository
 {
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly ReservaDbContext _dbContext;
+        private readonly CourierManagementDbContext _dbContext;
         private readonly DbSet<TEntity> _entity;
 
-        public BaseRepository(ReservaDbContext context)
+        public BaseRepository(CourierManagementDbContext context)
         {
             _dbContext = context;
             _entity = _dbContext.Set<TEntity>();
@@ -24,10 +24,6 @@ namespace courier.management.system.Infrastructure.Repository
         {
             return await _dbContext.Database.BeginTransactionAsync();
         }
-        //public IDbContextTransaction UseTransaction(IDbContextTransaction transaction)
-        //{
-        //    return _dbContext.Database.UseTransaction(transaction.GetDbTransaction());
-        //}
         public void CommitTransaction(IDbContextTransaction transaction)
         {
             transaction.Commit();
@@ -77,7 +73,7 @@ namespace courier.management.system.Infrastructure.Repository
             _dbContext.SaveChanges();
         }
 
-        public void Update(STADIUM reserve)
+        public void Update(COURIER courier)
         {
             throw new NotImplementedException();
         }

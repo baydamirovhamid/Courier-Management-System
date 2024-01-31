@@ -5,23 +5,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace courier.management.system.Models;
 
-public partial class RESERVE
+public partial class PAYMENT
 {
      [Column("id"), Key]
      public int Id { get; set; }
 
-     [Column("client_id")]
-        
-    public int? ClientId { get; set; }
+     [Column("amount")]
+    public int? Amount { get; set; }
 
-    [Column("stadium_id")]     
-    public int? StadiumId { get; set; }
+    [Column("payment_date")]     
+    public int? PaymentDate { get; set; }
 
-    [Column("date")]     
-    public DateTime? Date { get; set; }
+    [Column("customer_id")]     
+    public DateTime? CustomerId { get; set; }
 
-    [Column("total_amount")]     
-    public int? TotalAmount { get; set; }
+    [Column("package_id")]
+    public DateTime? PackageId { get; set; }
 
     [Column("created_at")]     
     public DateTime? CreatedAt { get; set; }
@@ -35,8 +34,5 @@ public partial class RESERVE
     [Column("updated_by")]  
     public string? UpdatedBy { get; set; }
 
-    [Column("is_deleted")]  
-    public bool? IsDeleted { get; set; }
 
-    public virtual STADIUM? Stadium { get; set; }
 }

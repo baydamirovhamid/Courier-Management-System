@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [customer] (
   [id] integer PRIMARY KEY,
   [name] nvarchar(255),
+  [surname] nvarchar(255),
   [address] nvarchar(255),
   [contact] nvarchar(255),
   [created_at] timestamp,
@@ -13,6 +14,7 @@ GO
 CREATE TABLE [courier] (
   [id] integer PRIMARY KEY,
   [name] nvarchar(255),
+  [surname] nvarchar(255),
   [contact] nvarchar(255),
   "created_at" timestamp,
   "created_by" varchar,

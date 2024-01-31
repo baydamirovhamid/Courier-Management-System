@@ -18,28 +18,27 @@ namespace courier.management.system.Services.Implementation
         private readonly UserManager<USER> _userManager;
         private readonly SignInManager<USER> _signInManager;
         private readonly ILoggerManager _logger;
-        private readonly IRepository<CLIENT> _clients;
+        private readonly IRepository<CUSTOMER> _customers;
         private readonly IMapper _mapper;
         private readonly IJwtHandler _jwtHandler;
-        private readonly IEmailService _emailService;
         AppConfiguration config = new AppConfiguration();
 
         public AuthService(
             UserManager<USER> userManager,
             SignInManager<USER> signInManager,
             ILoggerManager logger,
-            IRepository<CLIENT> clients,
+            IRepository<CUSTOMER> customers,
             IMapper mapper,
-            IJwtHandler jwtHandler,
-            IEmailService emailService)
+            IJwtHandler jwtHandler
+            
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _clients = clients;
-            _mapper = mapper;
+            _customers = customers;
+            _mapper = mapper;       
             _jwtHandler = jwtHandler;
-            _emailService = emailService;
         }
 
         public async Task<ResponseSimple> RegisterUserAsync(ResponseSimple response, RegisterDto model)
@@ -52,16 +51,16 @@ namespace courier.management.system.Services.Implementation
                 if (!result.Succeeded)
                 {
                     response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                    response.Status.Message = "Problem baş verdi!";
+                    response.Status.Message = "Invalid!";
                 }
                 else
-                    response.Status.Message = "Uğurla əlavə olundu!";
+                    response.Status.Message = "Successfully added!";
             }
             catch (Exception e)
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(RegisterUserAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "Invalid!";
             }
             return response;
         }
@@ -77,7 +76,7 @@ namespace courier.management.system.Services.Implementation
                     if(user == null)
                     {
                         response.Status.ErrorCode = ErrorCodes.AUTH;
-                        response.Status.Message = "İstifadəçi adı və ya şifrə yanlışdır!";
+                        response.Status.Message = "Username or password is incorrect!";
                         return response;
                     }
                   
@@ -87,13 +86,13 @@ namespace courier.management.system.Services.Implementation
                 if (!result)
                 {
                     response.Status.ErrorCode = ErrorCodes.AUTH;
-                    response.Status.Message = "İstifadəçi adı və ya şifrə yanlışdır!";
+                    response.Status.Message = "Username or password is incorrect!";
                     return response;
                 }
                 if (!(await _signInManager.CanSignInAsync(user)))
                 {
                     response.Status.ErrorCode = ErrorCodes.AUTH;
-                    response.Status.Message = "Daxil olmaq mümkün olmadı!";
+                    response.Status.Message = "Login failed!";
                     return response;
                 }
                 var claims = _mapper.Map<JwtCustomClaims>(user);
@@ -103,7 +102,7 @@ namespace courier.management.system.Services.Implementation
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "A problem occurred!";
             }
             return response;
         }
@@ -115,21 +114,21 @@ namespace courier.management.system.Services.Implementation
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    response.Status.Message = "Belə bir user tapılmadı!";
+                    response.Status.Message = "User don't found!";
                     return response;
                 }
 
                 var token = await GeneratePasswordResetTokenAsync(user);
-                token = HttpUtility.UrlEncode(token);
+                token = HttpUtility.UrlEncode(token);    
                 var link = config.MailUrl + $"reset-password?token={token}&email={email}";
-                _emailService.SendEmailForgetPassword(email, link);
-                response.Status.Message = "Şifrəni yeniləmək üçün emailinizə link göndərildi!";
+              //  _emailService.SendEmailForgetPassword(email, link);
+                response.Status.Message = "A link to reset your password has been sent to your email!";
             }
             catch (Exception e)
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "A problem occurred!";
             }
             return response;
         }
@@ -141,7 +140,7 @@ namespace courier.management.system.Services.Implementation
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    response.Status.Message = "Belə bir user tapılmadı!";
+                    response.Status.Message = "User doesn't found!";
                     return response;
                 }
 
@@ -149,17 +148,17 @@ namespace courier.management.system.Services.Implementation
                 if (!result.Succeeded)
                 {
                     response.Status.ErrorCode = ErrorCodes.AUTH;
-                    response.Status.Message = "Şifrə yenilənmədi!";
+                    response.Status.Message = "Password doesn't updated!";
                     return response;
                 }
 
-                response.Status.Message = "Şifrə yeniləndi!";
+                response.Status.Message = "Password updated!";
             }
             catch (Exception e)
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ResetPasswordAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "A problem occurred!";
             }
             return response;
         }
@@ -172,7 +171,7 @@ namespace courier.management.system.Services.Implementation
                 var user = await _userManager.FindByIdAsync(model.UserId.ToString());
                 if (user == null)
                 {
-                    response.Status.Message = "Belə bir user tapılmadı!";
+                    response.Status.Message = "User doesn't found!";
                     return response;
                 }
 
@@ -180,17 +179,17 @@ namespace courier.management.system.Services.Implementation
                 if (!result.Succeeded)
                 {
                     response.Status.ErrorCode = ErrorCodes.AUTH;
-                    response.Status.Message = "Şifrə yenilənmədi!";
+                    response.Status.Message = "Password doesn't updated!";
                     return response;
                 }
 
-                response.Status.Message = "Şifrə yeniləndi!";
+                response.Status.Message = "Password updated!";
             }
             catch (Exception e)
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ChangePasswordAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "A problem occurred!";
             }
             return response;
         }

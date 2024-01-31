@@ -53,7 +53,7 @@ namespace courier.management.system.Controllers
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(RegisterUserAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
@@ -82,7 +82,7 @@ namespace courier.management.system.Controllers
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(LoginUserAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
@@ -111,7 +111,7 @@ namespace courier.management.system.Controllers
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ForgotPasswordAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
@@ -141,7 +141,7 @@ namespace courier.management.system.Controllers
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ResetPasswordAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
@@ -172,7 +172,7 @@ namespace courier.management.system.Controllers
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(ChangePasswordAsync)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }

@@ -5,32 +5,31 @@ using courier.management.system.DTO.RequestModels;
 using courier.management.system.DTO.ResponseModels.Main;
 using courier.management.system.Services.Interface;
 using System.Diagnostics;
-using courier.management.system.Services.Implementation;
 
 namespace courier.management.system.Controllers
 {
-   
-        [Route("api/v1/[controller]")]
+
+    [Route("api/v1/[controller]")]
         [ApiController]
-        public class ReserveController : ControllerBase
+        public class PaymentController : ControllerBase
         {
-            private readonly IReserveService _reserveService;
+            private readonly IPaymentService _paymentService;
             private readonly IValidationCommon _validation;
             private readonly ILoggerManager _logger;
-            public ReserveController(
-                IReserveService reserveService,
+            public PaymentController(
+                IPaymentService paymentService,
                 IValidationCommon validation,
                 ILoggerManager logger
                 )
             {
-                _reserveService = reserveService;
+                _paymentService = paymentService;
                 _validation = validation;
                 _logger = logger;
             }
 
             [HttpPost]
             [Route("create")]
-            public async Task<IActionResult> CreateReserveAsync(ReserveDto model)
+            public async Task<IActionResult> CreatePaymentAsync(PaymentDto model)
             {
                 ResponseSimple response = new ResponseSimple();
                 response.Status = new StatusModel();
@@ -38,7 +37,7 @@ namespace courier.management.system.Controllers
                 try
                 {
 
-                    response = await _reserveService.CreateAsync(response, model);
+                    response = await _paymentService.CreateAsync(response, model);
                     if (response.Status.ErrorCode != 0)
                     {
                         return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
@@ -50,16 +49,16 @@ namespace courier.management.system.Controllers
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("TraceId: " + response.TraceID + $", {nameof(CreateReserveAsync)}: " + $"{e}");
+                    _logger.LogError("TraceId: " + response.TraceID + $", {nameof(CreatePaymentAsync)}: " + $"{e}");
                     response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                    response.Status.Message = "Sistemdə xəta baş verdi.";
+                    response.Status.Message = "A system error has occurred.";
                     return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
                 }
             }
 
             [HttpPost]
             [Route("update")]
-            public async Task<IActionResult> UpdateReserveAsync(ReserveDto model, int id)
+            public async Task<IActionResult> UpdatePaymentAsync(PaymentDto model, int id)
             {
                 ResponseSimple response = new ResponseSimple();
                 response.Status = new StatusModel();
@@ -67,7 +66,7 @@ namespace courier.management.system.Controllers
                 try
                 {
 
-                    response = await _reserveService.UpdateAsync(response, model, id);
+                    response = await _paymentService.UpdateAsync(response, model, id);
                     if (response.Status.ErrorCode != 0)
                     {
                         return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
@@ -79,16 +78,16 @@ namespace courier.management.system.Controllers
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdateReserveAsync)}: " + $"{e}");
+                    _logger.LogError("TraceId: " + response.TraceID + $", {nameof(UpdatePaymentAsync)}: " + $"{e}");
                     response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                    response.Status.Message = "Sistemdə xəta baş verdi.";
+                    response.Status.Message = "A system error has occurred.";
                     return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
                 }
             }
 
             [HttpDelete]
             [Route("delete")]
-            public async Task<IActionResult> DeleteReserveAsync(int id)
+            public async Task<IActionResult> DeletePaymentAsync(int id)
             {
                 ResponseSimple response = new ResponseSimple();
                 response.Status = new StatusModel();
@@ -96,7 +95,7 @@ namespace courier.management.system.Controllers
                 try
                 {
 
-                    response = await _reserveService.DeleteAsync(response, id);
+                    response = await _paymentService.DeleteAsync(response, id);
                     if (response.Status.ErrorCode != 0)
                     {
                         return StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
@@ -108,9 +107,9 @@ namespace courier.management.system.Controllers
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("TraceId: " + response.TraceID + $", {nameof(DeleteReserveAsync)}: " + $"{e}");
+                    _logger.LogError("TraceId: " + response.TraceID + $", {nameof(DeletePaymentAsync)}: " + $"{e}");
                     response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                    response.Status.Message = "Sistemdə xəta baş verdi.";
+                    response.Status.Message = "A system error has occurred.";
                     return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
                 }
             }
@@ -120,15 +119,15 @@ namespace courier.management.system.Controllers
         [Route("get-by-id")]
         public async Task<IActionResult> GetById(int id)
         {
-            ResponseObject<ReserveVM> response = new ResponseObject<ReserveVM>();
+            ResponseObject<PaymentVM> response = new ResponseObject<PaymentVM>();
             response.Status = new StatusModel();
             response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
             try
             {
-                response.Response = await _reserveService.GetByIdAsync(id);
+                response.Response = await _paymentService.GetByIdAsync(id);
                 if (response.Response == null)
                 {
-                    response.Status.Message = "Məlumat tapılmadı!";
+                    response.Status.Message = "Information not found!";
                     response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
                     StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
                 }
@@ -138,7 +137,7 @@ namespace courier.management.system.Controllers
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetById)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }
@@ -147,16 +146,16 @@ namespace courier.management.system.Controllers
         [Route("get-all")]
         public async Task<IActionResult> GetAll(int page, int pageSize)
         {
-            ResponseListTotal<ReserveVM> response = new ResponseListTotal<ReserveVM>();
-            response.Response = new ResponseTotal<ReserveVM>();
+            ResponseListTotal<PaymentVM> response = new ResponseListTotal<PaymentVM>();
+            response.Response = new ResponseTotal<PaymentVM>();
             response.Status = new StatusModel();
             response.TraceID = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
             try
             {
-                response = await _reserveService.GetAll(response, page, pageSize);
+                response = await _paymentService.GetAll(response, page, pageSize);
                 if (response.Response.Data == null)
                 {
-                    response.Status.Message = "Məlumat tapılmadı!";
+                    response.Status.Message = "Information not found!";
                     response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
                     StatusCode(_validation.CheckErrorCode(response.Status.ErrorCode), response);
                 }
@@ -166,7 +165,7 @@ namespace courier.management.system.Controllers
             {
                 _logger.LogError("TraceId: " + response.TraceID + $", {nameof(GetAll)}: " + $"{e}");
                 response.Status.ErrorCode = ErrorCodes.SYSTEM;
-                response.Status.Message = "Sistemdə xəta baş verdi.";
+                response.Status.Message = "A system error has occurred.";
                 return StatusCode(StatusCodeModel.INTERNEL_SERVER, response);
             }
         }

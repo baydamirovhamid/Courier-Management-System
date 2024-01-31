@@ -12,112 +12,51 @@ namespace courier.management.system.Services.Implementation
 {
     public class LookupService : ILookupService
     {
-        private readonly IRepository<STATIC_DATA> _staticDataRepository;
-        private readonly IRepository<TIME_TYPE> _timeTypeRepository;
-        private readonly IRepository<STADIUM_TYPE> _stadiumTypeRepository; 
-        private readonly IRepository<COMPANY> _companyRepository;
-        private readonly IRepository<COMPANY_BRANCH> _companyBranchRepository;
+        private readonly IRepository<PAYMENT> _paymentRepository;
+        private readonly IRepository<PACKAGE> _packageRepository;
 
         private readonly IMapper _mapper;
-        public LookupService(IRepository<STATIC_DATA> staticDataRepository, IRepository<TIME_TYPE> timeTypeRepository, IRepository<STADIUM_TYPE> stadiumTypeRepository,  IRepository<COMPANY> companyRepository, IRepository<COMPANY_BRANCH> companyBranchRepository, IMapper mapper)
+        public LookupService(IRepository<PAYMENT> paymentRepository, IRepository<PACKAGE> packageRepository, IMapper mapper)
         {
-            _staticDataRepository = staticDataRepository;
-            _timeTypeRepository = timeTypeRepository;
-            _stadiumTypeRepository = stadiumTypeRepository;
-            _companyRepository = companyRepository;
-            _companyBranchRepository = companyBranchRepository;
+            _paymentRepository = paymentRepository;
+            _packageRepository = packageRepository;
             _mapper = mapper;
         }
 
-        
-        public async Task<ResponseObject<StaticVM>> GetStaticDataAsync(ResponseObject<StaticVM> response, string key)
+        public async Task<ResponseList<PaymentVM>> GetPaymentAsync(ResponseList<PaymentVM> response)
         {
             try
             {
-                var result = await _staticDataRepository.AllQuery.FirstOrDefaultAsync(x => x.Key == key);
-                if (result == null)
-                {
-                    response.Status.ErrorCode = ErrorCodes.NOT_FOUND;
-                    response.Status.Message = "Tapılmadı!";
-                }
-                else
-                {
-                    response.Response = _mapper.Map<StaticVM>(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Status.ErrorCode = ErrorCodes.DB;
-                response.Status.Message = "Problem baş verdi!";
-            }
-            return response;
-        }
-    
-       public async Task<ResponseList<TimeTypeVM>> GetTimeTypeAsync(ResponseList<TimeTypeVM> response)
-    {
-        try
-        {
-            var result = await _timeTypeRepository.AllQuery.ToListAsync();
-          
-            response.Data = _mapper.Map<List<TimeTypeVM>>(result);
-            
-        }
-        catch (Exception ex)
-        {
-            response.Status.ErrorCode = ErrorCodes.DB;
-            response.Status.Message = "Problem baş verdi!";
-        }
-        return response;
-    }
+                var result = await _paymentRepository.AllQuery.ToListAsync();
 
-        public async Task<ResponseList<StadiumTypeVM>> GetStadiumTypeAsync(ResponseList<StadiumTypeVM> response)
-        {
-            try
-            {
-                var result = await _stadiumTypeRepository.AllQuery.ToListAsync();
-                response.Data = _mapper.Map<List<StadiumTypeVM>>(result);
-                 
-            }
-            catch (Exception ex)
-            {
-                response.Status.ErrorCode = ErrorCodes.DB;
-                response.Status.Message = "Problem baş verdi!";
-            }
-            return response;
-        }
-        public async Task<ResponseList<CompanyVM>> GetCompanyAsync(ResponseList<CompanyVM> response)
-        {
-            try
-            {
-                var result = await _companyRepository.AllQuery.ToListAsync();
-
-                response.Data = _mapper.Map<List<CompanyVM>>(result);
+                response.Data = _mapper.Map<List<PaymentVM>>(result);
 
             }
             catch (Exception ex)
             {
                 response.Status.ErrorCode = ErrorCodes.DB;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "A problem was occured!";
             }
             return response;
         }
 
-
-        public async Task<ResponseList<CompanyBranch>> GetCompanyBranch(ResponseList<CompanyBranch> response)
+        public async Task<ResponseList<PackageVM>> GetPackageAsync(ResponseList<PackageVM> response)
         {
             try
             {
-                var result = await _companyBranchRepository.AllQuery.ToListAsync();
-                response.Data = _mapper.Map<List<CompanyBranch>>(result);
-              
+                var result = await _packageRepository.AllQuery.ToListAsync();
+
+                response.Data = _mapper.Map<List<PackageVM>>(result);
+
             }
             catch (Exception ex)
             {
                 response.Status.ErrorCode = ErrorCodes.DB;
-                response.Status.Message = "Problem baş verdi!";
+                response.Status.Message = "A problem was occured!";
             }
             return response;
         }
     }
 }
 
+     
